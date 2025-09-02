@@ -1,0 +1,27 @@
+{
+  "name": "5-sprint-mission2",
+  "version": "1.0.0",
+  "description": "sprint-mission2-project ",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/june5815/5-sprint-mission.git"
+  },
+  "keywords": [
+    "sprint",
+    "mission",
+    "api",
+    "nodejs"
+  ],
+  "author": "DAON",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/june5815/5-sprint-mission/issues"
+  },
+  "homepage": "https://github.com/june5815/5-sprint-mission#readme"
+}
