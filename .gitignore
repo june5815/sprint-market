@@ -174,4 +174,4 @@ dist
 # SvelteKit build / generate output
 .svelte-kit
 
-# End of https://www.toptal.com/developers/gitignore/api/macos,node
+# End of https://www.toptal.com/developers/gitignore/api/macos,nodenode_modules/
