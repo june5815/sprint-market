@@ -217,3 +217,15 @@ Thumbs.db
 Desktop.ini
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,node
+
+# node
+node_modules/
+npm-debug.log
+.env
+.env.*
+.DS_Store
+
+# build / dist
+dist/
+build/
+coverage/
