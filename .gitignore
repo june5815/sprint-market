@@ -116,6 +116,10 @@ web_modules/
 .env.production.local
 .env.local
 
+# Project specific environment files
+src/.env
+database/.env
+
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache
@@ -174,4 +178,42 @@ dist
 # SvelteKit build / generate output
 .svelte-kit
 
-# End of https://www.toptal.com/developers/gitignore/api/macos,nodenode_modules/
+# Project specific additions
+# Uploaded files (user uploads)
+uploads/
+public/uploads/
+
+# Prisma generated files
+src/generated/
+database/src/generated/
+prisma/generated/
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Application logs
+logs/
+*.log
+
+# Database files (if using SQLite)
+*.db
+*.sqlite
+*.sqlite3
+
+# Backup files
+*.backup
+*.bak
+
+# Temporary files
+temp/
+tmp/
+
+# OS generated files (additional)
+Thumbs.db
+Desktop.ini
+
+# End of https://www.toptal.com/developers/gitignore/api/macos,node
