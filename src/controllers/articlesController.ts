@@ -14,14 +14,10 @@ import {
   GetCommentListParamsStruct,
 } from "../structs/commentsStruct";
 import { attachIsLiked } from "../lib/isLikedUtil";
-import {
-  AuthenticatedRequest,
-  AuthenticatedHandler,
-  ExpressHandler,
-} from "../types/common";
+import { AuthenticatedHandler, ExpressHandler } from "../types/common";
 
 export const createArticle: AuthenticatedHandler = async (
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response
 ): Promise<void> => {
   const userId = req.user?.userId;
@@ -54,7 +50,7 @@ export const getArticle: ExpressHandler = async (
 };
 
 export const updateArticle: AuthenticatedHandler = async (
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response
 ): Promise<void> => {
   const { id } = create(req.params, IdParamsStruct);
@@ -79,7 +75,7 @@ export const updateArticle: AuthenticatedHandler = async (
 };
 
 export async function deleteArticle(
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response
 ): Promise<void> {
   const { id } = create(req.params, IdParamsStruct);
@@ -102,7 +98,7 @@ export async function deleteArticle(
 }
 
 export async function getArticleList(
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response
 ): Promise<void> {
   const { page, pageSize, orderBy, keyword } = create(
@@ -132,7 +128,7 @@ export async function getArticleList(
 }
 
 export async function createComment(
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response
 ): Promise<void> {
   const userId = req.user?.userId;

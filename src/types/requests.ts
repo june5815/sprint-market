@@ -1,4 +1,4 @@
-import { AuthenticatedRequest } from "./common";
+import { Request } from "express";
 import {
   ArticleCreateData,
   ArticleUpdateData,
@@ -14,50 +14,49 @@ export interface IdParams {
 }
 
 
-export interface CreateArticleRequest extends AuthenticatedRequest {
+export interface CreateArticleRequest extends Request {
   body: ArticleCreateData;
 }
 
-export interface UpdateArticleRequest extends AuthenticatedRequest {
+export interface UpdateArticleRequest extends Request {
   body: ArticleUpdateData;
   params: IdParams;
 }
 
-export interface GetArticleRequest extends AuthenticatedRequest {
+export interface GetArticleRequest extends Request {
   params: IdParams;
 }
 
 
-export interface CreateProductRequest extends AuthenticatedRequest {
+export interface CreateProductRequest extends Request {
   body: ProductCreateData;
 }
 
-export interface UpdateProductRequest extends AuthenticatedRequest {
+export interface UpdateProductRequest extends Request {
   body: ProductUpdateData;
   params: IdParams;
 }
 
-export interface GetProductRequest extends AuthenticatedRequest {
+export interface GetProductRequest extends Request {
   params: IdParams;
 }
 
-
-export interface CreateCommentRequest extends AuthenticatedRequest {
+export interface CreateCommentRequest extends Request {
   body: CommentCreateData;
   params: IdParams;
 }
 
-export interface UpdateCommentRequest extends AuthenticatedRequest {
+export interface UpdateCommentRequest extends Request {
   body: CommentUpdateData;
   params: IdParams;
 }
 
 
-export interface LikeRequest extends AuthenticatedRequest {
+export interface LikeRequest extends Request {
   params: IdParams;
 }
 
-export interface RegisterRequest extends AuthenticatedRequest {
+export interface RegisterRequest extends Request {
   body: {
     email: string;
     nickname: string;
@@ -65,27 +64,27 @@ export interface RegisterRequest extends AuthenticatedRequest {
   };
 }
 
-export interface LoginRequest extends AuthenticatedRequest {
+export interface LoginRequest extends Request {
   body: {
     email: string;
     password: string;
   };
 }
 
-export interface RefreshTokenRequest extends AuthenticatedRequest {
+export interface RefreshTokenRequest extends Request {
   body: {
     refreshToken: string;
   };
 }
 
-export interface UpdateUserInfoRequest extends AuthenticatedRequest {
+export interface UpdateUserInfoRequest extends Request {
   body: {
     nickname?: string;
     image?: string;
   };
 }
 
-export interface ChangePasswordRequest extends AuthenticatedRequest {
+export interface ChangePasswordRequest extends Request {
   body: {
     currentPassword: string;
     newPassword: string;

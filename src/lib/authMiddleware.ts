@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyToken } from "./jwt";
-import { AuthenticatedRequest, AuthenticatedMiddleware } from "../types/common";
+import { AuthenticatedMiddleware } from "../types/common";
 
 export const authMiddleware: AuthenticatedMiddleware = (
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ): void => {

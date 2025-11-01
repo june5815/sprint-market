@@ -3,12 +3,14 @@
   "scripts": {
     "build": "tsc",
     "start": "node ./dist/main.js",
-    "dev": "tsx watch ./src/main.ts",
-    "seed": "tsx ./prisma/seed.ts",
+    "dev:tsx": "tsx watch ./src/main.ts",
+    "dev": "npm run dev:watch",
+    "dev:watch": "nodemon --exec tsx ./src/main.ts --watch src --ext ts",
+    "seed": "tsx ./prisma/seed.js",
     "format": "prettier --write ."
   },
   "prisma": {
-    "seed": "tsx ./prisma/seed.ts"
+    "seed": "tsx ./prisma/seed.js"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",

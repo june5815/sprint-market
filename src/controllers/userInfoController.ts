@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
 import { prismaClient } from "../lib/prismaClient";
 import bcrypt from "bcrypt";
-import { AuthenticatedRequest, AuthenticatedHandler } from "../types/common";
+import { AuthenticatedHandler } from "../types/common";
 import {
   UpdateUserInfoRequest,
   ChangePasswordRequest,
 } from "../types/requests";
 
 export const getMyInfo: AuthenticatedHandler = async (
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response
 ): Promise<void> => {
   const userId = req.user?.userId;
@@ -103,7 +103,7 @@ export async function changeMyPassword(
 }
 
 export async function getMyProducts(
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response
 ): Promise<void> {
   const userId = req.user?.userId;

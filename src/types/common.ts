@@ -6,10 +6,9 @@ export type StringOrNumber = string | number;
 export type PromiseResult<T> = Promise<T>;
 export type AsyncResult<T> = Promise<T>;
 
-
 export type ExpressHandler = (req: Request, res: Response) => Promise<void>;
 export type AuthenticatedHandler = (
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response
 ) => Promise<void>;
 export type ExpressMiddleware = (
@@ -18,21 +17,18 @@ export type ExpressMiddleware = (
   next: NextFunction
 ) => void | Promise<void>;
 export type AuthenticatedMiddleware = (
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => void | Promise<void>;
-
 
 export type ApiSuccessResponse<T> = { data: T; message?: string };
 export type ApiErrorResponse = { message: string; error?: string };
 export type ApiListResponse<T> = PaginatedResponse<T> | CursorResponse<T>;
 
-
 export type CreateOperation<T> = Omit<T, "id" | keyof TimestampFields>;
 export type UpdateOperation<T> = Partial<Omit<T, "id" | keyof TimestampFields>>;
 export type SelectFields<T> = Partial<Record<keyof T, boolean>>;
-
 
 export type DeepPartial<T> = {
   [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
@@ -41,15 +37,10 @@ export type DeepPartial<T> = {
 export type NonNullable<T> = T extends null | undefined ? never : T;
 export type Nullable<T> = T | null;
 
-
 export interface User {
   userId: ID;
   email?: string;
   nickname?: string;
-}
-
-export interface AuthenticatedRequest extends Request {
-  user?: User;
 }
 
 export interface ApiResponse<T = unknown> {

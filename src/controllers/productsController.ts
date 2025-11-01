@@ -14,14 +14,10 @@ import {
   GetCommentListParamsStruct,
 } from "../structs/commentsStruct";
 import { attachIsLiked } from "../lib/isLikedUtil";
-import {
-  AuthenticatedRequest,
-  AuthenticatedHandler,
-  ExpressHandler,
-} from "../types/common";
+import { AuthenticatedHandler, ExpressHandler } from "../types/common";
 
 export const createProduct: AuthenticatedHandler = async (
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response
 ): Promise<void> => {
   const { name, description, price, tags, images } = create(
@@ -53,7 +49,7 @@ export async function getProduct(req: Request, res: Response): Promise<void> {
 }
 
 export async function updateProduct(
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response
 ): Promise<void> {
   const { id } = create(req.params, IdParamsStruct);
@@ -82,7 +78,7 @@ export async function updateProduct(
 }
 
 export async function deleteProduct(
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response
 ): Promise<void> {
   const { id } = create(req.params, IdParamsStruct);
@@ -104,7 +100,7 @@ export async function deleteProduct(
 }
 
 export async function getProductList(
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response
 ): Promise<void> {
   const { page, pageSize, orderBy, keyword } = create(
@@ -138,7 +134,7 @@ export async function getProductList(
 }
 
 export async function createComment(
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response
 ): Promise<void> {
   const { id: productId } = create(req.params, IdParamsStruct);

@@ -4,10 +4,10 @@ import { prismaClient } from "../lib/prismaClient";
 import { UpdateCommentBodyStruct } from "../structs/commentsStruct";
 import NotFoundError from "../lib/errors/NotFoundError";
 import { IdParamsStruct } from "../structs/commonStructs";
-import { AuthenticatedRequest, AuthenticatedHandler } from "../types/common";
+import { AuthenticatedHandler } from "../types/common";
 
 export const updateComment: AuthenticatedHandler = async (
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response
 ): Promise<void> => {
   const { id } = create(req.params, IdParamsStruct);
@@ -36,7 +36,7 @@ export const updateComment: AuthenticatedHandler = async (
 };
 
 export async function deleteComment(
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response
 ): Promise<void> {
   const { id } = create(req.params, IdParamsStruct);
