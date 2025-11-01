@@ -1,23 +1,33 @@
-import { Request, Response, NextFunction } from 'express';
-import { verifyToken } from './jwt.js';
+import { Request, Response, NextFunction } from "express";
+import { verifyToken } from "./jwt";
 
-interface AuthenticatedRequest extends Request {
-  user?: any;
+interface User {
+  userId: number;
+  email?: string;
+  nickname?: string;
 }
 
-export function authMiddleware(req: AuthenticatedRequest, res: Response, next: NextFunction): void {
+interface AuthenticatedRequest extends Request {
+  user?: User;
+}
+
+export function authMiddleware(
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+): void {
   const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    res.status(401).send({ message: '인증 토큰이 필요합니다.' });
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    res.status(401).send({ message: "인증 토큰이 필요합니다." });
     return;
   }
-  const token = authHeader.split(' ')[1];
+  const token = authHeader.split(" ")[1];
   try {
     const payload = verifyToken(token);
     req.user = payload;
     next();
   } catch (e) {
-    res.status(401).send({ message: '유효하지 않은 토큰입니다.' });
+    res.status(401).send({ message: "유효하지 않은 토큰입니다." });
     return;
   }
 }

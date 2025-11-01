@@ -9,7 +9,6 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
-    "rootDir": "./src",
     "declaration": true,
     "sourceMap": true,
     "resolveJsonModule": true,
@@ -18,14 +17,6 @@
     "allowJs": true,
     "checkJs": false
   },
-  "include": [
-    "src/**/*",
-    "prisma/**/*",
-    "services/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "test"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "test"]
 }
