@@ -1,6 +1,6 @@
 import { prismaClient } from "../lib/prismaClient";
 import bcrypt from "bcrypt";
-export async function getMyInfo(req, res) {
+export const getMyInfo = async (req, res) => {
     const userId = req.user?.userId;
     if (!userId) {
         res
@@ -24,7 +24,7 @@ export async function getMyInfo(req, res) {
         return;
     }
     res.send(user);
-}
+};
 export async function updateMyInfo(req, res) {
     const userId = req.user?.userId;
     if (!userId) {
@@ -86,9 +86,7 @@ export async function changeMyPassword(req, res) {
 export async function getMyProducts(req, res) {
     const userId = req.user?.userId;
     if (!userId) {
-        res
-            .status(401)
-            .send({
+        res.status(401).send({
             message: "로그인된 사용자만 자신의 상품 목록을 조회할 수 있습니다.",
         });
         return;

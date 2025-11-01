@@ -1,9 +1,4 @@
-import { Request, Response } from "express";
-interface AuthenticatedRequest extends Request {
-    user?: {
-        userId: number;
-    };
-}
-export declare function updateComment(req: AuthenticatedRequest, res: Response): Promise<void>;
+import { Response } from "express";
+import { AuthenticatedRequest, AuthenticatedHandler } from "../types/common";
+export declare const updateComment: AuthenticatedHandler;
 export declare function deleteComment(req: AuthenticatedRequest, res: Response): Promise<void>;
-export {};

@@ -7,32 +7,17 @@ import {
   verifyToken,
   JwtPayload,
 } from "../lib/jwt";
+import {
+  RegisterRequest,
+  LoginRequest,
+  RefreshTokenRequest,
+} from "../types/requests";
+import { ExpressHandler } from "../types/common";
 
-interface RegisterRequest extends Request {
-  body: {
-    email: string;
-    nickname: string;
-    password: string;
-  };
-}
-
-interface LoginRequest extends Request {
-  body: {
-    email: string;
-    password: string;
-  };
-}
-
-interface RefreshTokenRequest extends Request {
-  body: {
-    refreshToken: string;
-  };
-}
-
-export async function registerUser(
+export const registerUser: ExpressHandler = async (
   req: RegisterRequest,
   res: Response
-): Promise<void> {
+): Promise<void> => {
   const { email, nickname, password } = req.body;
   if (!email || !nickname || !password) {
     res
@@ -41,17 +26,16 @@ export async function registerUser(
     return;
   }
 
-  // 이메일 중복 체크
+
   const existingUser = await prismaClient.user.findUnique({ where: { email } });
   if (existingUser) {
     res.status(409).send({ message: "이미 가입된 이메일입니다." });
     return;
   }
 
-  // 비밀번호 해싱
+
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  // 회원 생성
   const user = await prismaClient.user.create({
     data: {
       email,
@@ -60,10 +44,10 @@ export async function registerUser(
     },
   });
 
-  // 비밀번호는 응답에서 제외
+
   const { password: _, ...userData } = user;
   res.status(201).send(userData);
-}
+};
 
 export async function loginUser(
   req: LoginRequest,
@@ -91,7 +75,7 @@ export async function loginUser(
     return;
   }
 
-  // 토큰 발급
+
   const token = signToken({
     userId: user.id,
     email: user.email,

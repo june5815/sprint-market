@@ -1,44 +1,20 @@
-// services/ProductService.ts
-interface ProductListParams {
-  page?: number;
-  pageSize?: number;
-  keyword?: string;
-  orderBy?: string;
-}
-
-interface ProductData {
-  name: string;
-  description: string;
-  price: number;
-  tags: string[];
-  images: string[];
-}
-
-interface Product {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  tags: string[];
-  images: string[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface ProductListResponse {
-  totalCount: number;
-  products: Product[];
-}
+import {
+  Product,
+  ProductCreateData,
+  ProductListParams,
+  ProductListResponse,
+} from "../types/models";
+import { StringOrNumber, PromiseResult, AsyncResult } from "../types/common";
 
 const BASE_URL = "https://panda-market-api-crud.vercel.app/products";
 
-// 상품 목록 조회
+// PromiseResult
 export async function getProductList({
   page = 1,
   pageSize = 10,
   keyword = "",
   orderBy = "recent",
-}: ProductListParams = {}): Promise<ProductListResponse> {
+}: ProductListParams = {}): PromiseResult<ProductListResponse> {
   const url = `${BASE_URL}?page=${page}&pageSize=${pageSize}&keyword=${keyword}&orderBy=${orderBy}`;
 
   try {
@@ -47,20 +23,20 @@ export async function getProductList({
 
     const { totalCount, list } = await res.json();
 
-    return { totalCount, products: list };
+    return { totalCount, list };
   } catch (err: unknown) {
     const error = err as Error;
-    console.error("❌ getProductList:", error.message);
+    console.error("getProductList:", error.message);
     throw error;
   }
 }
 
-// 상품 상세 조회
-export async function getProduct(productId: string | number): Promise<Product> {
+// 반환값에 as 
+export async function getProduct(productId: StringOrNumber) {
   try {
     const res = await fetch(`${BASE_URL}/${productId}`);
     if (!res.ok) throw new Error(`Error: ${res.status}`);
-    return await res.json();
+    return (await res.json()) as Product;
   } catch (err: unknown) {
     const error = err as Error;
     console.error("getProduct Error:", error.message);
@@ -68,22 +44,16 @@ export async function getProduct(productId: string | number): Promise<Product> {
   }
 }
 
-// 상품 생성
-export async function createProduct({
-  name,
-  description,
-  price,
-  tags,
-  images,
-}: ProductData): Promise<Product> {
+// 상품 생성 - 반환값에 as 
+export async function createProduct(data: ProductCreateData) {
   try {
     const res = await fetch(BASE_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, description, price, tags, images }),
+      body: JSON.stringify(data),
     });
     if (!res.ok) throw new Error(`Error: ${res.status}`);
-    return await res.json();
+    return (await res.json()) as Product;
   } catch (err: unknown) {
     const error = err as Error;
     console.error("createProduct Error:", error.message);
@@ -91,19 +61,19 @@ export async function createProduct({
   }
 }
 
-// 상품 수정
+// 상품 수정 - 반환값에 as 
 export async function patchProduct(
-  productId: string | number,
-  { name, description, price, tags, images }: ProductData
-): Promise<Product> {
+  productId: StringOrNumber,
+  data: ProductCreateData
+) {
   try {
     const res = await fetch(`${BASE_URL}/${productId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, description, price, tags, images }),
+      body: JSON.stringify(data),
     });
     if (!res.ok) throw new Error(`Error: ${res.status}`);
-    return await res.json();
+    return (await res.json()) as Product;
   } catch (err: unknown) {
     const error = err as Error;
     console.error("patchProduct Error:", error.message);
@@ -111,14 +81,12 @@ export async function patchProduct(
   }
 }
 
-// 상품 삭제
-export async function deleteProduct(
-  productId: string | number
-): Promise<{ message: string }> {
+//상품 삭제 - 반환값에 as 
+export async function deleteProduct(productId: StringOrNumber) {
   try {
     const res = await fetch(`${BASE_URL}/${productId}`, { method: "DELETE" });
     if (!res.ok) throw new Error(`Error: ${res.status}`);
-    return await res.json();
+    return (await res.json()) as { message: string };
   } catch (err: unknown) {
     const error = err as Error;
     console.error("deleteProduct Error:", error.message);

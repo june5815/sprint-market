@@ -9,7 +9,7 @@ import {
   nonempty,
 } from "superstruct";
 
-/** Convert string to integer then validate it */
+
 const integerString = coerce(integer(), string(), (value) => parseInt(value));
 
 export const IdParamsStruct = object({

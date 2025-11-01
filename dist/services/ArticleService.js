@@ -1,4 +1,3 @@
-// services/ArticleService.ts
 const BASE_URL = "https://panda-market-api-crud.vercel.app/articles";
 // 게시글 목록 조회
 export function getArticleList({ page = 1, pageSize = 10, keyword = "", orderBy = "recent", } = {}) {
@@ -18,11 +17,11 @@ export function getArticle(articleId) {
     });
 }
 // 게시글 생성
-export function createArticle({ title, content, image, }) {
+export function createArticle(data) {
     return fetch(BASE_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, content, image }),
+        body: JSON.stringify(data),
     }).then((res) => {
         if (!res.ok)
             throw new Error(`Error: ${res.status}`);
@@ -30,11 +29,11 @@ export function createArticle({ title, content, image, }) {
     });
 }
 // 게시글 수정
-export function patchArticle(articleId, { title, content, image }) {
+export function patchArticle(articleId, data) {
     return fetch(`${BASE_URL}/${articleId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, content, image }),
+        body: JSON.stringify(data),
     }).then((res) => {
         if (!res.ok)
             throw new Error(`Error: ${res.status}`);

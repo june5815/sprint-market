@@ -1,31 +1,16 @@
 import { Request, Response } from "express";
 import { prismaClient } from "../lib/prismaClient";
 import bcrypt from "bcrypt";
+import { AuthenticatedRequest, AuthenticatedHandler } from "../types/common";
+import {
+  UpdateUserInfoRequest,
+  ChangePasswordRequest,
+} from "../types/requests";
 
-interface AuthenticatedRequest extends Request {
-  user?: {
-    userId: number;
-  };
-}
-
-interface UpdateInfoRequest extends AuthenticatedRequest {
-  body: {
-    nickname?: string;
-    image?: string;
-  };
-}
-
-interface ChangePasswordRequest extends AuthenticatedRequest {
-  body: {
-    currentPassword: string;
-    newPassword: string;
-  };
-}
-
-export async function getMyInfo(
+export const getMyInfo: AuthenticatedHandler = async (
   req: AuthenticatedRequest,
   res: Response
-): Promise<void> {
+): Promise<void> => {
   const userId = req.user?.userId;
   if (!userId) {
     res
@@ -49,10 +34,10 @@ export async function getMyInfo(
     return;
   }
   res.send(user);
-}
+};
 
 export async function updateMyInfo(
-  req: UpdateInfoRequest,
+  req: UpdateUserInfoRequest,
   res: Response
 ): Promise<void> {
   const userId = req.user?.userId;
@@ -123,11 +108,9 @@ export async function getMyProducts(
 ): Promise<void> {
   const userId = req.user?.userId;
   if (!userId) {
-    res
-      .status(401)
-      .send({
-        message: "로그인된 사용자만 자신의 상품 목록을 조회할 수 있습니다.",
-      });
+    res.status(401).send({
+      message: "로그인된 사용자만 자신의 상품 목록을 조회할 수 있습니다.",
+    });
     return;
   }
   const products = await prismaClient.product.findMany({

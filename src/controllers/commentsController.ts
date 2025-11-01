@@ -4,17 +4,12 @@ import { prismaClient } from "../lib/prismaClient";
 import { UpdateCommentBodyStruct } from "../structs/commentsStruct";
 import NotFoundError from "../lib/errors/NotFoundError";
 import { IdParamsStruct } from "../structs/commonStructs";
+import { AuthenticatedRequest, AuthenticatedHandler } from "../types/common";
 
-interface AuthenticatedRequest extends Request {
-  user?: {
-    userId: number;
-  };
-}
-
-export async function updateComment(
+export const updateComment: AuthenticatedHandler = async (
   req: AuthenticatedRequest,
   res: Response
-): Promise<void> {
+): Promise<void> => {
   const { id } = create(req.params, IdParamsStruct);
   const { content } = create(req.body, UpdateCommentBodyStruct);
   const userId = req.user?.userId;
@@ -38,7 +33,7 @@ export async function updateComment(
   });
 
   res.send(updatedComment);
-}
+};
 
 export async function deleteComment(
   req: AuthenticatedRequest,

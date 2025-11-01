@@ -1,5 +1,5 @@
 import { verifyToken } from "./jwt";
-export function authMiddleware(req, res, next) {
+export const authMiddleware = (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
         res.status(401).send({ message: "인증 토큰이 필요합니다." });
@@ -15,5 +15,5 @@ export function authMiddleware(req, res, next) {
         res.status(401).send({ message: "유효하지 않은 토큰입니다." });
         return;
     }
-}
+};
 //# sourceMappingURL=authMiddleware.js.map

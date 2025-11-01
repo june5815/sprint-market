@@ -1,5 +1,5 @@
 const BASE_URL = "https://panda-market-api-crud.vercel.app/products";
-// 상품 목록 조회
+// PromiseResult
 export async function getProductList({ page = 1, pageSize = 10, keyword = "", orderBy = "recent", } = {}) {
     const url = `${BASE_URL}?page=${page}&pageSize=${pageSize}&keyword=${keyword}&orderBy=${orderBy}`;
     try {
@@ -7,21 +7,21 @@ export async function getProductList({ page = 1, pageSize = 10, keyword = "", or
         if (!res.ok)
             throw new Error(`HTTP ${res.status}`);
         const { totalCount, list } = await res.json();
-        return { totalCount, products: list };
+        return { totalCount, list };
     }
     catch (err) {
         const error = err;
-        console.error("❌ getProductList:", error.message);
+        console.error("getProductList:", error.message);
         throw error;
     }
 }
-// 상품 상세 조회
+// 반환값에 as 
 export async function getProduct(productId) {
     try {
         const res = await fetch(`${BASE_URL}/${productId}`);
         if (!res.ok)
             throw new Error(`Error: ${res.status}`);
-        return await res.json();
+        return (await res.json());
     }
     catch (err) {
         const error = err;
@@ -29,17 +29,17 @@ export async function getProduct(productId) {
         throw error;
     }
 }
-// 상품 생성
-export async function createProduct({ name, description, price, tags, images, }) {
+// 상품 생성 - 반환값에 as 
+export async function createProduct(data) {
     try {
         const res = await fetch(BASE_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, description, price, tags, images }),
+            body: JSON.stringify(data),
         });
         if (!res.ok)
             throw new Error(`Error: ${res.status}`);
-        return await res.json();
+        return (await res.json());
     }
     catch (err) {
         const error = err;
@@ -47,17 +47,17 @@ export async function createProduct({ name, description, price, tags, images, })
         throw error;
     }
 }
-// 상품 수정
-export async function patchProduct(productId, { name, description, price, tags, images }) {
+// 상품 수정 - 반환값에 as 
+export async function patchProduct(productId, data) {
     try {
         const res = await fetch(`${BASE_URL}/${productId}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, description, price, tags, images }),
+            body: JSON.stringify(data),
         });
         if (!res.ok)
             throw new Error(`Error: ${res.status}`);
-        return await res.json();
+        return (await res.json());
     }
     catch (err) {
         const error = err;
@@ -65,13 +65,13 @@ export async function patchProduct(productId, { name, description, price, tags, 
         throw error;
     }
 }
-// 상품 삭제
+//상품 삭제 - 반환값에 as 
 export async function deleteProduct(productId) {
     try {
         const res = await fetch(`${BASE_URL}/${productId}`, { method: "DELETE" });
         if (!res.ok)
             throw new Error(`Error: ${res.status}`);
-        return await res.json();
+        return (await res.json());
     }
     catch (err) {
         const error = err;

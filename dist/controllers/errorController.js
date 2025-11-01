@@ -1,10 +1,10 @@
 import { StructError } from "superstruct";
 import BadRequestError from "../lib/errors/BadRequestError";
 import NotFoundError from "../lib/errors/NotFoundError";
-export function defaultNotFoundHandler(req, res, next) {
+export const defaultNotFoundHandler = (req, res, next) => {
     res.status(404).send({ message: "Not found" });
-}
-export function globalErrorHandler(err, req, res, next) {
+};
+export const globalErrorHandler = (err, req, res, next) => {
     if (err instanceof StructError || err instanceof BadRequestError) {
         res.status(400).send({ message: err.message });
         return;
@@ -24,5 +24,5 @@ export function globalErrorHandler(err, req, res, next) {
     }
     console.error(err);
     res.status(500).send({ message: "Internal server error" });
-}
+};
 //# sourceMappingURL=errorController.js.map

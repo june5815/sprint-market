@@ -1,29 +1,22 @@
 import { prismaClient } from "./prismaClient";
-
-interface LikeableItem {
-  id: number;
-  [key: string]: any; 
-}
-
-interface LikeableItemWithLiked extends LikeableItem {
-  isLiked: boolean;
-}
+import { ID, LikeableItem, LikeableItemWithLiked } from "../types/common";
+import { LikeTarget } from "../types/models";
 
 interface LikeWhereClause {
-  userId: number;
-  articleId?: { in: number[] };
-  productId?: { in: number[] };
+  userId: ID;
+  articleId?: { in: ID[] };
+  productId?: { in: ID[] };
 }
 
 interface LikeRecord {
-  articleId?: number;
-  productId?: number;
+  articleId?: ID;
+  productId?: ID;
 }
 
 export async function attachIsLiked(
   items: LikeableItem[],
-  userId: number | null | undefined,
-  type: "article" | "product"
+  userId: ID | null | undefined,
+  type: LikeTarget
 ): Promise<LikeableItemWithLiked[]> {
   if (!userId) {
     return items.map((item) => ({ ...item, isLiked: false }));

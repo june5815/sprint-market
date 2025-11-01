@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response } from "express";
 import { create } from "superstruct";
 import { prismaClient } from "../lib/prismaClient";
 import NotFoundError from "../lib/errors/NotFoundError";
@@ -14,17 +14,21 @@ import {
   GetCommentListParamsStruct,
 } from "../structs/commentsStruct";
 import { attachIsLiked } from "../lib/isLikedUtil";
+import {
+  AuthenticatedRequest,
+  AuthenticatedHandler,
+  ExpressHandler,
+} from "../types/common";
 
-interface AuthenticatedRequest extends Request {
-  user?: {
-    userId: number;
-  };
-}
-
-export async function createArticle(req: AuthenticatedRequest, res: Response): Promise<void> {
+export const createArticle: AuthenticatedHandler = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
   const userId = req.user?.userId;
   if (!userId) {
-    res.status(401).send({ message: "로그인된 사용자만 게시글을 등록할 수 있습니다." });
+    res
+      .status(401)
+      .send({ message: "로그인된 사용자만 게시글을 등록할 수 있습니다." });
     return;
   }
   const data = create(req.body, CreateArticleBodyStruct);
@@ -33,9 +37,12 @@ export async function createArticle(req: AuthenticatedRequest, res: Response): P
   });
 
   res.status(201).send(article);
-}
+};
 
-export async function getArticle(req: Request, res: Response): Promise<void> {
+export const getArticle: ExpressHandler = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const { id } = create(req.params, IdParamsStruct);
 
   const article = await prismaClient.article.findUnique({ where: { id } });
@@ -44,9 +51,12 @@ export async function getArticle(req: Request, res: Response): Promise<void> {
   }
 
   res.send(article);
-}
+};
 
-export async function updateArticle(req: AuthenticatedRequest, res: Response): Promise<void> {
+export const updateArticle: AuthenticatedHandler = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
   const { id } = create(req.params, IdParamsStruct);
   const data = create(req.body, UpdateArticleBodyStruct);
   const userId = req.user?.userId;
@@ -55,7 +65,9 @@ export async function updateArticle(req: AuthenticatedRequest, res: Response): P
     throw new NotFoundError("article", id);
   }
   if (article.userId !== userId) {
-    res.status(403).send({ message: "게시글을 등록한 사용자만 수정할 수 있습니다." });
+    res
+      .status(403)
+      .send({ message: "게시글 등록한 사용자만 수정할 수 있습니다." });
     return;
   }
   const updatedArticle = await prismaClient.article.update({
@@ -64,9 +76,12 @@ export async function updateArticle(req: AuthenticatedRequest, res: Response): P
   });
 
   res.send(updatedArticle);
-}
+};
 
-export async function deleteArticle(req: AuthenticatedRequest, res: Response): Promise<void> {
+export async function deleteArticle(
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> {
   const { id } = create(req.params, IdParamsStruct);
   const userId = req.user?.userId;
   const existingArticle = await prismaClient.article.findUnique({
@@ -76,7 +91,9 @@ export async function deleteArticle(req: AuthenticatedRequest, res: Response): P
     throw new NotFoundError("article", id);
   }
   if (existingArticle.userId !== userId) {
-    res.status(403).send({ message: "게시글을 등록한 사용자만 삭제할 수 있습니다." });
+    res
+      .status(403)
+      .send({ message: "게시글 등록한 사용자만 삭제할 수 있습니다." });
     return;
   }
   await prismaClient.article.delete({ where: { id } });
@@ -84,7 +101,10 @@ export async function deleteArticle(req: AuthenticatedRequest, res: Response): P
   res.status(204).send();
 }
 
-export async function getArticleList(req: AuthenticatedRequest, res: Response): Promise<void> {
+export async function getArticleList(
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> {
   const { page, pageSize, orderBy, keyword } = create(
     req.query,
     GetArticleListParamsStruct
@@ -111,10 +131,15 @@ export async function getArticleList(req: AuthenticatedRequest, res: Response): 
   });
 }
 
-export async function createComment(req: AuthenticatedRequest, res: Response): Promise<void> {
+export async function createComment(
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> {
   const userId = req.user?.userId;
   if (!userId) {
-    res.status(401).send({ message: "로그인된 사용자만 댓글을 등록할 수 있습니다." });
+    res
+      .status(401)
+      .send({ message: "로그인된 사용자만 댓글을 등록할 수 있습니다." });
     return;
   }
   const { id: articleId } = create(req.params, IdParamsStruct);
@@ -138,7 +163,10 @@ export async function createComment(req: AuthenticatedRequest, res: Response): P
   res.status(201).send(comment);
 }
 
-export async function getCommentList(req: Request, res: Response): Promise<void> {
+export async function getCommentList(
+  req: Request,
+  res: Response
+): Promise<void> {
   const { id: articleId } = create(req.params, IdParamsStruct);
   const { cursor, limit } = create(req.query, GetCommentListParamsStruct);
 

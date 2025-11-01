@@ -1,21 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyToken } from "./jwt";
+import { AuthenticatedRequest, AuthenticatedMiddleware } from "../types/common";
 
-interface User {
-  userId: number;
-  email?: string;
-  nickname?: string;
-}
-
-interface AuthenticatedRequest extends Request {
-  user?: User;
-}
-
-export function authMiddleware(
+export const authMiddleware: AuthenticatedMiddleware = (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
-): void {
+): void => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     res.status(401).send({ message: "인증 토큰이 필요합니다." });
@@ -30,4 +21,4 @@ export function authMiddleware(
     res.status(401).send({ message: "유효하지 않은 토큰입니다." });
     return;
   }
-}
+};

@@ -1,7 +1,7 @@
 import { prismaClient } from "../lib/prismaClient";
 import bcrypt from "bcrypt";
 import { signToken, signRefreshToken, verifyToken, } from "../lib/jwt";
-export async function registerUser(req, res) {
+export const registerUser = async (req, res) => {
     const { email, nickname, password } = req.body;
     if (!email || !nickname || !password) {
         res
@@ -28,7 +28,7 @@ export async function registerUser(req, res) {
     // 비밀번호는 응답에서 제외
     const { password: _, ...userData } = user;
     res.status(201).send(userData);
-}
+};
 export async function loginUser(req, res) {
     const { email, password } = req.body;
     if (!email || !password) {

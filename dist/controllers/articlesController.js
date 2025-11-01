@@ -5,10 +5,12 @@ import { IdParamsStruct } from "../structs/commonStructs";
 import { CreateArticleBodyStruct, UpdateArticleBodyStruct, GetArticleListParamsStruct, } from "../structs/articlesStructs";
 import { CreateCommentBodyStruct, GetCommentListParamsStruct, } from "../structs/commentsStruct";
 import { attachIsLiked } from "../lib/isLikedUtil";
-export async function createArticle(req, res) {
+export const createArticle = async (req, res) => {
     const userId = req.user?.userId;
     if (!userId) {
-        res.status(401).send({ message: "로그인된 사용자만 게시글을 등록할 수 있습니다." });
+        res
+            .status(401)
+            .send({ message: "로그인된 사용자만 게시글을 등록할 수 있습니다." });
         return;
     }
     const data = create(req.body, CreateArticleBodyStruct);
@@ -16,16 +18,16 @@ export async function createArticle(req, res) {
         data: { ...data, userId },
     });
     res.status(201).send(article);
-}
-export async function getArticle(req, res) {
+};
+export const getArticle = async (req, res) => {
     const { id } = create(req.params, IdParamsStruct);
     const article = await prismaClient.article.findUnique({ where: { id } });
     if (!article) {
         throw new NotFoundError("article", id);
     }
     res.send(article);
-}
-export async function updateArticle(req, res) {
+};
+export const updateArticle = async (req, res) => {
     const { id } = create(req.params, IdParamsStruct);
     const data = create(req.body, UpdateArticleBodyStruct);
     const userId = req.user?.userId;
@@ -34,7 +36,9 @@ export async function updateArticle(req, res) {
         throw new NotFoundError("article", id);
     }
     if (article.userId !== userId) {
-        res.status(403).send({ message: "게시글을 등록한 사용자만 수정할 수 있습니다." });
+        res
+            .status(403)
+            .send({ message: "게시글 등록한 사용자만 수정할 수 있습니다." });
         return;
     }
     const updatedArticle = await prismaClient.article.update({
@@ -42,7 +46,7 @@ export async function updateArticle(req, res) {
         data,
     });
     res.send(updatedArticle);
-}
+};
 export async function deleteArticle(req, res) {
     const { id } = create(req.params, IdParamsStruct);
     const userId = req.user?.userId;
@@ -53,7 +57,9 @@ export async function deleteArticle(req, res) {
         throw new NotFoundError("article", id);
     }
     if (existingArticle.userId !== userId) {
-        res.status(403).send({ message: "게시글을 등록한 사용자만 삭제할 수 있습니다." });
+        res
+            .status(403)
+            .send({ message: "게시글 등록한 사용자만 삭제할 수 있습니다." });
         return;
     }
     await prismaClient.article.delete({ where: { id } });
@@ -81,7 +87,9 @@ export async function getArticleList(req, res) {
 export async function createComment(req, res) {
     const userId = req.user?.userId;
     if (!userId) {
-        res.status(401).send({ message: "로그인된 사용자만 댓글을 등록할 수 있습니다." });
+        res
+            .status(401)
+            .send({ message: "로그인된 사용자만 댓글을 등록할 수 있습니다." });
         return;
     }
     const { id: articleId } = create(req.params, IdParamsStruct);

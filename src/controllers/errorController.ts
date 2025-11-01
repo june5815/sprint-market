@@ -2,26 +2,34 @@ import { Request, Response, NextFunction } from "express";
 import { StructError } from "superstruct";
 import BadRequestError from "../lib/errors/BadRequestError";
 import NotFoundError from "../lib/errors/NotFoundError";
+import { ExpressMiddleware } from "../types/common";
 
 interface ErrorWithCode extends Error {
   code?: string;
   status?: number;
 }
 
-export function defaultNotFoundHandler(
+export const defaultNotFoundHandler: ExpressMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction
-): void {
+): void => {
   res.status(404).send({ message: "Not found" });
-}
+};
 
-export function globalErrorHandler(
+type ErrorHandler = (
   err: ErrorWithCode,
   req: Request,
   res: Response,
   next: NextFunction
-): void {
+) => void;
+
+export const globalErrorHandler: ErrorHandler = (
+  err: ErrorWithCode,
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
   if (err instanceof StructError || err instanceof BadRequestError) {
     res.status(400).send({ message: err.message });
     return;
@@ -45,4 +53,4 @@ export function globalErrorHandler(
 
   console.error(err);
   res.status(500).send({ message: "Internal server error" });
-}
+};

@@ -3,7 +3,7 @@ import { prismaClient } from "../lib/prismaClient";
 import { UpdateCommentBodyStruct } from "../structs/commentsStruct";
 import NotFoundError from "../lib/errors/NotFoundError";
 import { IdParamsStruct } from "../structs/commonStructs";
-export async function updateComment(req, res) {
+export const updateComment = async (req, res) => {
     const { id } = create(req.params, IdParamsStruct);
     const { content } = create(req.body, UpdateCommentBodyStruct);
     const userId = req.user?.userId;
@@ -24,7 +24,7 @@ export async function updateComment(req, res) {
         data: { content },
     });
     res.send(updatedComment);
-}
+};
 export async function deleteComment(req, res) {
     const { id } = create(req.params, IdParamsStruct);
     const userId = req.user?.userId;

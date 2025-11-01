@@ -1,32 +1,12 @@
-// services/ArticleService.ts
+import {
+  Article,
+  ArticleCreateData,
+  ArticleListParams,
+  ArticleListResponse,
+} from "../types/models";
+import { StringOrNumber } from "../types/common";
+
 const BASE_URL = "https://panda-market-api-crud.vercel.app/articles";
-
-interface ArticleListParams {
-  page?: number;
-  pageSize?: number;
-  keyword?: string;
-  orderBy?: string;
-}
-
-interface ArticleData {
-  title: string;
-  content: string;
-  image?: string;
-}
-
-interface Article {
-  id: number;
-  title: string;
-  content: string;
-  image?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface ArticleListResponse {
-  totalCount: number;
-  list: Article[];
-}
 
 // 게시글 목록 조회
 export function getArticleList({
@@ -43,7 +23,7 @@ export function getArticleList({
 }
 
 // 게시글 상세 조회
-export function getArticle(articleId: string | number): Promise<Article> {
+export function getArticle(articleId: StringOrNumber): Promise<Article> {
   return fetch(`${BASE_URL}/${articleId}`).then((res) => {
     if (!res.ok) throw new Error(`Error: ${res.status}`);
     return res.json();
@@ -51,15 +31,11 @@ export function getArticle(articleId: string | number): Promise<Article> {
 }
 
 // 게시글 생성
-export function createArticle({
-  title,
-  content,
-  image,
-}: ArticleData): Promise<Article> {
+export function createArticle(data: ArticleCreateData): Promise<Article> {
   return fetch(BASE_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ title, content, image }),
+    body: JSON.stringify(data),
   }).then((res) => {
     if (!res.ok) throw new Error(`Error: ${res.status}`);
     return res.json();
@@ -68,13 +44,13 @@ export function createArticle({
 
 // 게시글 수정
 export function patchArticle(
-  articleId: string | number,
-  { title, content, image }: ArticleData
+  articleId: StringOrNumber,
+  data: ArticleCreateData
 ): Promise<Article> {
   return fetch(`${BASE_URL}/${articleId}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ title, content, image }),
+    body: JSON.stringify(data),
   }).then((res) => {
     if (!res.ok) throw new Error(`Error: ${res.status}`);
     return res.json();
@@ -83,7 +59,7 @@ export function patchArticle(
 
 // 게시글 삭제
 export function deleteArticle(
-  articleId: string | number
+  articleId: StringOrNumber
 ): Promise<{ message: string }> {
   return fetch(`${BASE_URL}/${articleId}`, { method: "DELETE" }).then((res) => {
     if (!res.ok) throw new Error(`Error: ${res.status}`);

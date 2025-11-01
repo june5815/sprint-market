@@ -36,16 +36,16 @@ async function handleLike(req, res, type, action) {
         return;
     }
 }
-export async function likeArticle(req, res) {
+export const likeArticle = async (req, res) => {
     return handleLike(req, res, "article", "like");
-}
-export async function unlikeArticle(req, res) {
+};
+export const unlikeArticle = async (req, res) => {
     return handleLike(req, res, "article", "unlike");
-}
-export async function likeProduct(req, res) {
+};
+export const likeProduct = async (req, res) => {
     return handleLike(req, res, "product", "like");
-}
-export async function unlikeProduct(req, res) {
+};
+export const unlikeProduct = async (req, res) => {
     return handleLike(req, res, "product", "unlike");
-}
+};
 //# sourceMappingURL=likeController.js.map

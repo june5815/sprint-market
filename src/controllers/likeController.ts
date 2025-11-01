@@ -1,29 +1,29 @@
 import { Request, Response } from "express";
 import { prismaClient } from "../lib/prismaClient";
-
-interface AuthenticatedRequest extends Request {
-  user?: {
-    userId: number;
-  };
-}
+import {
+  AuthenticatedRequest,
+  ID,
+  AuthenticatedHandler,
+} from "../types/common";
+import { LikeTarget, LikeAction } from "../types/models";
 
 interface LikeWhereClause {
-  userId: number;
-  articleId?: number;
-  productId?: number;
+  userId: ID;
+  articleId?: ID;
+  productId?: ID;
 }
 
 interface LikeCreateData {
-  userId: number;
-  articleId?: number;
-  productId?: number;
+  userId: ID;
+  articleId?: ID;
+  productId?: ID;
 }
 
 async function handleLike(
   req: AuthenticatedRequest,
   res: Response,
-  type: "article" | "product",
-  action: "like" | "unlike"
+  type: LikeTarget,
+  action: LikeAction
 ): Promise<void> {
   const userId = req.user?.userId;
   const itemId = Number(req.params.id);
@@ -62,30 +62,30 @@ async function handleLike(
   }
 }
 
-export async function likeArticle(
+export const likeArticle: AuthenticatedHandler = async (
   req: AuthenticatedRequest,
   res: Response
-): Promise<void> {
+): Promise<void> => {
   return handleLike(req, res, "article", "like");
-}
+};
 
-export async function unlikeArticle(
+export const unlikeArticle: AuthenticatedHandler = async (
   req: AuthenticatedRequest,
   res: Response
-): Promise<void> {
+): Promise<void> => {
   return handleLike(req, res, "article", "unlike");
-}
+};
 
-export async function likeProduct(
+export const likeProduct: AuthenticatedHandler = async (
   req: AuthenticatedRequest,
   res: Response
-): Promise<void> {
+): Promise<void> => {
   return handleLike(req, res, "product", "like");
-}
+};
 
-export async function unlikeProduct(
+export const unlikeProduct: AuthenticatedHandler = async (
   req: AuthenticatedRequest,
   res: Response
-): Promise<void> {
+): Promise<void> => {
   return handleLike(req, res, "product", "unlike");
-}
+};

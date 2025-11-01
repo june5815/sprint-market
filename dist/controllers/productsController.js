@@ -5,18 +5,20 @@ import { IdParamsStruct } from "../structs/commonStructs";
 import { CreateProductBodyStruct, GetProductListParamsStruct, UpdateProductBodyStruct, } from "../structs/productsStruct";
 import { CreateCommentBodyStruct, GetCommentListParamsStruct, } from "../structs/commentsStruct";
 import { attachIsLiked } from "../lib/isLikedUtil";
-export async function createProduct(req, res) {
+export const createProduct = async (req, res) => {
     const { name, description, price, tags, images } = create(req.body, CreateProductBodyStruct);
     const userId = req.user?.userId;
     if (!userId) {
-        res.status(401).send({ message: "로그인된 사용자만 상품을 등록할 수 있습니다." });
+        res
+            .status(401)
+            .send({ message: "로그인된 사용자만 상품을 등록할 수 있습니다." });
         return;
     }
     const product = await prismaClient.product.create({
         data: { name, description, price, tags, images, userId },
     });
     res.status(201).send(product);
-}
+};
 export async function getProduct(req, res) {
     const { id } = create(req.params, IdParamsStruct);
     const product = await prismaClient.product.findUnique({ where: { id } });
@@ -36,7 +38,9 @@ export async function updateProduct(req, res) {
         throw new NotFoundError("product", id);
     }
     if (existingProduct.userId !== userId) {
-        res.status(403).send({ message: "상품을 등록한 사용자만 수정할 수 있습니다." });
+        res
+            .status(403)
+            .send({ message: "상품을 등록한 사용자만 수정할 수 있습니다." });
         return;
     }
     const updatedProduct = await prismaClient.product.update({
@@ -55,7 +59,9 @@ export async function deleteProduct(req, res) {
         throw new NotFoundError("product", id);
     }
     if (existingProduct.userId !== userId) {
-        res.status(403).send({ message: "상품을 등록한 사용자만 삭제할 수 있습니다." });
+        res
+            .status(403)
+            .send({ message: "상품을 등록한 사용자만 삭제할 수 있습니다." });
         return;
     }
     await prismaClient.product.delete({ where: { id } });
@@ -90,7 +96,9 @@ export async function createComment(req, res) {
     const { content } = create(req.body, CreateCommentBodyStruct);
     const userId = req.user?.userId;
     if (!userId) {
-        res.status(401).send({ message: "로그인된 사용자만 댓글을 작성할 수 있습니다." });
+        res
+            .status(401)
+            .send({ message: "로그인된 사용자만 댓글을 작성할 수 있습니다." });
         return;
     }
     const existingProduct = await prismaClient.product.findUnique({

@@ -1,31 +1,9 @@
-interface ArticleListParams {
-    page?: number;
-    pageSize?: number;
-    keyword?: string;
-    orderBy?: string;
-}
-interface ArticleData {
-    title: string;
-    content: string;
-    image?: string;
-}
-interface Article {
-    id: number;
-    title: string;
-    content: string;
-    image?: string;
-    createdAt: string;
-    updatedAt: string;
-}
-interface ArticleListResponse {
-    totalCount: number;
-    list: Article[];
-}
+import { Article, ArticleCreateData, ArticleListParams, ArticleListResponse } from "../types/models";
+import { StringOrNumber } from "../types/common";
 export declare function getArticleList({ page, pageSize, keyword, orderBy, }?: ArticleListParams): Promise<ArticleListResponse>;
-export declare function getArticle(articleId: string | number): Promise<Article>;
-export declare function createArticle({ title, content, image, }: ArticleData): Promise<Article>;
-export declare function patchArticle(articleId: string | number, { title, content, image }: ArticleData): Promise<Article>;
-export declare function deleteArticle(articleId: string | number): Promise<{
+export declare function getArticle(articleId: StringOrNumber): Promise<Article>;
+export declare function createArticle(data: ArticleCreateData): Promise<Article>;
+export declare function patchArticle(articleId: StringOrNumber, data: ArticleCreateData): Promise<Article>;
+export declare function deleteArticle(articleId: StringOrNumber): Promise<{
     message: string;
 }>;
-export {};
