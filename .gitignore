@@ -56,6 +56,11 @@ tmp/
 temp/
 test/
 
+# Test files
+test-socket.js
+*.test.manual.js
+price-change-notification-manual.test.ts
+
 # Uploaded files
 public/*
 !public/.gitkeep
