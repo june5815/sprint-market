@@ -9,10 +9,11 @@ import imagesRouter from "./routers/imagesRouter";
 import userRouter from "./routers/userRouter";
 import userInfoRouter from "./routers/userInfoRouter";
 import likeRouter from "./routers/likeRouter";
+import notificationsRouter from "./features/notifications/routers/notificationsRouter";
 import {
   defaultNotFoundHandler,
   globalErrorHandler,
-} from "./controllers/errorController";
+} from "./inbound/controllers/errorController";
 
 const app = express();
 
@@ -24,12 +25,14 @@ app.use("/articles", articlesRouter);
 app.use("/products", productsRouter);
 app.use("/comments", commentsRouter);
 app.use("/images", imagesRouter);
+app.use("/auth", userRouter);
 app.use("/users", userInfoRouter);
 app.use("/likes", likeRouter);
+app.use("/notifications", notificationsRouter);
 
 app.use(defaultNotFoundHandler);
 app.use(globalErrorHandler);
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

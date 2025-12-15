@@ -1,22 +1,22 @@
 import { Request, Response } from "express";
-import { prismaClient } from "../lib/prismaClient";
+import { prismaClient } from "../../lib/prismaClient";
 import bcrypt from "bcrypt";
 import {
   signToken,
   signRefreshToken,
   verifyToken,
   JwtPayload,
-} from "../lib/jwt";
+} from "../../lib/jwt";
 import {
   RegisterRequest,
   LoginRequest,
   RefreshTokenRequest,
-} from "../types/requests";
-import { ExpressHandler } from "../types/common";
+} from "../../types/requests";
+import { ExpressHandler } from "../../types/common";
 
 export const registerUser: ExpressHandler = async (
   req: RegisterRequest,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const { email, nickname, password } = req.body;
   if (!email || !nickname || !password) {
@@ -26,13 +26,11 @@ export const registerUser: ExpressHandler = async (
     return;
   }
 
-
   const existingUser = await prismaClient.user.findUnique({ where: { email } });
   if (existingUser) {
     res.status(409).send({ message: "이미 가입된 이메일입니다." });
     return;
   }
-
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -44,15 +42,14 @@ export const registerUser: ExpressHandler = async (
     },
   });
 
-
   const { password: _, ...userData } = user;
   res.status(201).send(userData);
 };
 
-export async function loginUser(
+export const loginUser: ExpressHandler = async (
   req: LoginRequest,
-  res: Response
-): Promise<void> {
+  res: Response,
+): Promise<void> => {
   const { email, password } = req.body;
   if (!email || !password) {
     res.status(400).send({ message: "email, password는 필수입니다." });
@@ -75,24 +72,23 @@ export async function loginUser(
     return;
   }
 
-
   const token = signToken({
     userId: user.id,
     email: user.email,
     nickname: user.nickname,
   });
-  const refreshToken = signRefreshToken({ userId: user.id });
+  const refreshTokenValue = signRefreshToken({ userId: user.id });
   await prismaClient.user.update({
     where: { id: user.id },
-    data: { refreshToken },
+    data: { refreshToken: refreshTokenValue },
   });
-  res.send({ accessToken: token, refreshToken });
-}
+  res.send({ accessToken: token, refreshToken: refreshTokenValue });
+};
 
-export async function refreshToken(
+export const refreshToken: ExpressHandler = async (
   req: RefreshTokenRequest,
-  res: Response
-): Promise<void> {
+  res: Response,
+): Promise<void> => {
   const { refreshToken } = req.body;
   if (!refreshToken) {
     res.status(400).send({ message: "Refresh Token이 필요합니다." });
@@ -118,4 +114,4 @@ export async function refreshToken(
     nickname: user.nickname,
   });
   res.send({ accessToken: newAccessToken });
-}
+};

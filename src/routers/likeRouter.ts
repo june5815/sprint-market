@@ -6,7 +6,7 @@ import {
   unlikeArticle,
   likeProduct,
   unlikeProduct,
-} from "../controllers/likeController";
+} from "../inbound/controllers/likeController";
 
 const likeRouter = express.Router();
 

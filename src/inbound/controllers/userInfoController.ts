@@ -1,15 +1,15 @@
 import { Request, Response } from "express";
-import { prismaClient } from "../lib/prismaClient";
+import { prismaClient } from "../../lib/prismaClient";
 import bcrypt from "bcrypt";
-import { AuthenticatedHandler } from "../types/common";
+import { AuthenticatedHandler } from "../../types/common";
 import {
   UpdateUserInfoRequest,
   ChangePasswordRequest,
-} from "../types/requests";
+} from "../../types/requests";
 
 export const getMyInfo: AuthenticatedHandler = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const userId = req.user?.userId;
   if (!userId) {
@@ -36,10 +36,7 @@ export const getMyInfo: AuthenticatedHandler = async (
   res.send(user);
 };
 
-export async function updateMyInfo(
-  req: UpdateUserInfoRequest,
-  res: Response
-): Promise<void> {
+export async function updateMyInfo(req: Request, res: Response): Promise<void> {
   const userId = req.user?.userId;
   if (!userId) {
     res
@@ -67,8 +64,8 @@ export async function updateMyInfo(
 }
 
 export async function changeMyPassword(
-  req: ChangePasswordRequest,
-  res: Response
+  req: Request,
+  res: Response,
 ): Promise<void> {
   const userId = req.user?.userId;
   if (!userId) {
@@ -104,7 +101,7 @@ export async function changeMyPassword(
 
 export async function getMyProducts(
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> {
   const userId = req.user?.userId;
   if (!userId) {
@@ -127,4 +124,29 @@ export async function getMyProducts(
     },
   });
   res.send({ list: products, totalCount: products.length });
+}
+
+export async function getMyArticles(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const userId = req.user?.userId;
+  if (!userId) {
+    res.status(401).send({
+      message: "로그인된 사용자만 자신의 게시글 목록을 조회할 수 있습니다.",
+    });
+    return;
+  }
+  const articles = await prismaClient.article.findMany({
+    where: { userId },
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      image: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+  res.send({ list: articles, totalCount: articles.length });
 }

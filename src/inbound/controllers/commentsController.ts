@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
 import { create } from "superstruct";
-import { prismaClient } from "../lib/prismaClient";
-import { UpdateCommentBodyStruct } from "../structs/commentsStruct";
-import NotFoundError from "../lib/errors/NotFoundError";
-import { IdParamsStruct } from "../structs/commonStructs";
-import { AuthenticatedHandler } from "../types/common";
+import { prismaClient } from "../../lib/prismaClient";
+import { UpdateCommentBodyStruct } from "../../structs/commentsStruct";
+import NotFoundError from "../../lib/errors/NotFoundError";
+import { IdParamsStruct } from "../../structs/commonStructs";
+import { AuthenticatedHandler } from "../../types/common";
 
 export const updateComment: AuthenticatedHandler = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const { id } = create(req.params, IdParamsStruct);
   const { content } = create(req.body, UpdateCommentBodyStruct);
@@ -35,10 +35,10 @@ export const updateComment: AuthenticatedHandler = async (
   res.send(updatedComment);
 };
 
-export async function deleteComment(
+export const deleteComment: AuthenticatedHandler = async (
   req: Request,
-  res: Response
-): Promise<void> {
+  res: Response,
+): Promise<void> => {
   const { id } = create(req.params, IdParamsStruct);
   const userId = req.user?.userId;
 
@@ -57,4 +57,4 @@ export async function deleteComment(
 
   await prismaClient.comment.delete({ where: { id } });
   res.status(204).send();
-}
+};

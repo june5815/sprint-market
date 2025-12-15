@@ -4,17 +4,17 @@ import {
   ProductListParams,
   ProductListResponse,
 } from "../types/models";
-import { StringOrNumber, PromiseResult, AsyncResult } from "../types/common";
+import { StringOrNumber } from "../types/common";
+import { PORT } from "../lib/constants";
 
-const BASE_URL = "https://panda-market-api-crud.vercel.app/products";
+const BASE_URL = `http://localhost:${PORT}/products`;
 
-// PromiseResult
 export async function getProductList({
   page = 1,
   pageSize = 10,
   keyword = "",
   orderBy = "recent",
-}: ProductListParams = {}): PromiseResult<ProductListResponse> {
+}: ProductListParams = {}): Promise<ProductListResponse> {
   const url = `${BASE_URL}?page=${page}&pageSize=${pageSize}&keyword=${keyword}&orderBy=${orderBy}`;
 
   try {
@@ -31,7 +31,6 @@ export async function getProductList({
   }
 }
 
-// 반환값에 as 
 export async function getProduct(productId: StringOrNumber) {
   try {
     const res = await fetch(`${BASE_URL}/${productId}`);
@@ -44,7 +43,6 @@ export async function getProduct(productId: StringOrNumber) {
   }
 }
 
-// 상품 생성 - 반환값에 as 
 export async function createProduct(data: ProductCreateData) {
   try {
     const res = await fetch(BASE_URL, {
@@ -61,10 +59,9 @@ export async function createProduct(data: ProductCreateData) {
   }
 }
 
-// 상품 수정 - 반환값에 as 
 export async function patchProduct(
   productId: StringOrNumber,
-  data: ProductCreateData
+  data: ProductCreateData,
 ) {
   try {
     const res = await fetch(`${BASE_URL}/${productId}`, {
@@ -81,7 +78,6 @@ export async function patchProduct(
   }
 }
 
-//상품 삭제 - 반환값에 as 
 export async function deleteProduct(productId: StringOrNumber) {
   try {
     const res = await fetch(`${BASE_URL}/${productId}`, { method: "DELETE" });

@@ -1,9 +1,11 @@
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
+import {
+  JWT_SECRET,
+  REFRESH_TOKEN_SECRET,
+  ACCESS_TOKEN_EXPIRES_IN,
+  REFRESH_TOKEN_EXPIRES_IN,
+} from "./constants";
 import { ID } from "../types/common";
-dotenv.config();
-
-const JWT_SECRET: string = process.env.JWT_SECRET || "changeme-secret";
 
 export interface JwtPayload {
   userId: ID;
@@ -21,9 +23,9 @@ export interface TokenPayload {
 
 export function signToken(
   payload: TokenPayload,
-  options: jwt.SignOptions = {}
+  options: jwt.SignOptions = {},
 ): string {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: "1h", ...options });
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: "15m", ...options });
 }
 
 export function verifyToken(token: string): JwtPayload {
@@ -32,7 +34,10 @@ export function verifyToken(token: string): JwtPayload {
 
 export function signRefreshToken(
   payload: TokenPayload,
-  options: jwt.SignOptions = {}
+  options: jwt.SignOptions = {},
 ): string {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: "7d", ...options });
+  return jwt.sign(payload, REFRESH_TOKEN_SECRET, {
+    expiresIn: "7d",
+    ...options,
+  });
 }

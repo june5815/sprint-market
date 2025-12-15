@@ -5,7 +5,7 @@ import { AuthenticatedMiddleware } from "../types/common";
 export const authMiddleware: AuthenticatedMiddleware = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {

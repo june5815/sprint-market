@@ -9,17 +9,17 @@ export type AsyncResult<T> = Promise<T>;
 export type ExpressHandler = (req: Request, res: Response) => Promise<void>;
 export type AuthenticatedHandler = (
   req: Request,
-  res: Response
+  res: Response,
 ) => Promise<void>;
 export type ExpressMiddleware = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => void | Promise<void>;
 export type AuthenticatedMiddleware = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => void | Promise<void>;
 
 export type ApiSuccessResponse<T> = { data: T; message?: string };

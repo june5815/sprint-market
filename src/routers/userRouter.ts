@@ -4,7 +4,7 @@ import {
   registerUser,
   loginUser,
   refreshToken,
-} from "../controllers/userController";
+} from "../inbound/controllers/userController";
 
 const userRouter = express.Router();
 

@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 import multer from "multer";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
-import { PUBLIC_PATH, STATIC_PATH } from "../lib/constants";
-import BadRequestError from "../lib/errors/BadRequestError";
+import { PUBLIC_PATH, STATIC_PATH, IMAGE_BASE_URL } from "../../lib/constants";
+import BadRequestError from "../../lib/errors/BadRequestError";
 
 const ALLOWED_MIME_TYPES = ["image/png", "image/jpeg", "image/jpg"];
 const FILE_SIZE_LIMIT = 5 * 1024 * 1024;
@@ -40,15 +40,14 @@ interface MulterRequest extends Request {
 
 export async function uploadImage(
   req: MulterRequest,
-  res: Response
+  res: Response,
 ): Promise<void> {
   if (!req.file) {
     res.status(400).send({ message: "No file uploaded" });
     return;
   }
 
-  const host = req.get("host");
-  const filePath = path.join(host!, STATIC_PATH, req.file.filename);
-  const url = `http://${filePath}`;
+  const filePath = path.join(STATIC_PATH, req.file.filename);
+  const url = `${IMAGE_BASE_URL}${filePath}`;
   res.send({ url });
 }

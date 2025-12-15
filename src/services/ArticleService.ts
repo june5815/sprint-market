@@ -5,10 +5,10 @@ import {
   ArticleListResponse,
 } from "../types/models";
 import { StringOrNumber } from "../types/common";
+import { PORT } from "../lib/constants";
 
-const BASE_URL = "https://panda-market-api-crud.vercel.app/articles";
+const BASE_URL = `http://localhost:${PORT}/articles`;
 
-// 게시글 목록 조회
 export function getArticleList({
   page = 1,
   pageSize = 10,
@@ -22,7 +22,6 @@ export function getArticleList({
   });
 }
 
-// 게시글 상세 조회
 export function getArticle(articleId: StringOrNumber): Promise<Article> {
   return fetch(`${BASE_URL}/${articleId}`).then((res) => {
     if (!res.ok) throw new Error(`Error: ${res.status}`);
@@ -30,7 +29,6 @@ export function getArticle(articleId: StringOrNumber): Promise<Article> {
   });
 }
 
-// 게시글 생성
 export function createArticle(data: ArticleCreateData): Promise<Article> {
   return fetch(BASE_URL, {
     method: "POST",
@@ -42,10 +40,9 @@ export function createArticle(data: ArticleCreateData): Promise<Article> {
   });
 }
 
-// 게시글 수정
 export function patchArticle(
   articleId: StringOrNumber,
-  data: ArticleCreateData
+  data: ArticleCreateData,
 ): Promise<Article> {
   return fetch(`${BASE_URL}/${articleId}`, {
     method: "PATCH",
@@ -57,9 +54,8 @@ export function patchArticle(
   });
 }
 
-// 게시글 삭제
 export function deleteArticle(
-  articleId: StringOrNumber
+  articleId: StringOrNumber,
 ): Promise<{ message: string }> {
   return fetch(`${BASE_URL}/${articleId}`, { method: "DELETE" }).then((res) => {
     if (!res.ok) throw new Error(`Error: ${res.status}`);

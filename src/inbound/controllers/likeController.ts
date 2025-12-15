@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { prismaClient } from "../lib/prismaClient";
-import { ID, AuthenticatedHandler } from "../types/common";
-import { LikeTarget, LikeAction } from "../types/models";
+import { prismaClient } from "../../lib/prismaClient";
+import { ID, AuthenticatedHandler } from "../../types/common";
+import { LikeTarget, LikeAction } from "../../types/models";
 
 interface LikeWhereClause {
   userId: ID;
@@ -19,7 +19,7 @@ async function handleLike(
   req: Request,
   res: Response,
   type: LikeTarget,
-  action: LikeAction
+  action: LikeAction,
 ): Promise<void> {
   const userId = req.user?.userId;
   const itemId = Number(req.params.id);
@@ -60,28 +60,28 @@ async function handleLike(
 
 export const likeArticle: AuthenticatedHandler = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   return handleLike(req, res, "article", "like");
 };
 
 export const unlikeArticle: AuthenticatedHandler = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   return handleLike(req, res, "article", "unlike");
 };
 
 export const likeProduct: AuthenticatedHandler = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   return handleLike(req, res, "product", "like");
 };
 
 export const unlikeProduct: AuthenticatedHandler = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   return handleLike(req, res, "product", "unlike");
 };

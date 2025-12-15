@@ -1,24 +1,24 @@
 import { Request, Response } from "express";
 import { create } from "superstruct";
-import { prismaClient } from "../lib/prismaClient";
-import NotFoundError from "../lib/errors/NotFoundError";
-import BadRequestError from "../lib/errors/BadRequestError";
-import { IdParamsStruct } from "../structs/commonStructs";
+import { prismaClient } from "../../lib/prismaClient";
+import NotFoundError from "../../lib/errors/NotFoundError";
+import BadRequestError from "../../lib/errors/BadRequestError";
+import { IdParamsStruct } from "../../structs/commonStructs";
 import {
   CreateArticleBodyStruct,
   UpdateArticleBodyStruct,
   GetArticleListParamsStruct,
-} from "../structs/articlesStructs";
+} from "../../structs/articlesStructs";
 import {
   CreateCommentBodyStruct,
   GetCommentListParamsStruct,
-} from "../structs/commentsStruct";
-import { attachIsLiked } from "../lib/isLikedUtil";
-import { AuthenticatedHandler, ExpressHandler } from "../types/common";
+} from "../../structs/commentsStruct";
+import { attachIsLiked } from "../../lib/isLikedUtil";
+import { AuthenticatedHandler, ExpressHandler } from "../../types/common";
 
 export const createArticle: AuthenticatedHandler = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const userId = req.user?.userId;
   if (!userId) {
@@ -32,26 +32,49 @@ export const createArticle: AuthenticatedHandler = async (
     data: { ...data, userId },
   });
 
-  res.status(201).send(article);
+  // 응답 형식 정렬
+  const response = {
+    updatedAt: article.updatedAt,
+    createdAt: article.createdAt,
+    image: article.image,
+    content: article.content,
+    title: article.title,
+    id: article.id,
+  };
+
+  res.status(201).send(response);
 };
 
 export const getArticle: ExpressHandler = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const { id } = create(req.params, IdParamsStruct);
+  const userId = req.user?.userId;
 
   const article = await prismaClient.article.findUnique({ where: { id } });
   if (!article) {
     throw new NotFoundError("article", id);
   }
 
-  res.send(article);
+  const [articleWithLiked] = await attachIsLiked([article], userId, "article");
+
+  // 응답 형식 정렬
+  const response = {
+    updatedAt: articleWithLiked.updatedAt,
+    createdAt: articleWithLiked.createdAt,
+    image: articleWithLiked.image,
+    content: articleWithLiked.content,
+    title: articleWithLiked.title,
+    id: articleWithLiked.id,
+  };
+
+  res.send(response);
 };
 
 export const updateArticle: AuthenticatedHandler = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const { id } = create(req.params, IdParamsStruct);
   const data = create(req.body, UpdateArticleBodyStruct);
@@ -71,13 +94,23 @@ export const updateArticle: AuthenticatedHandler = async (
     data,
   });
 
-  res.send(updatedArticle);
+  // 응답 형식 정렬
+  const response = {
+    updatedAt: updatedArticle.updatedAt,
+    createdAt: updatedArticle.createdAt,
+    image: updatedArticle.image,
+    content: updatedArticle.content,
+    title: updatedArticle.title,
+    id: updatedArticle.id,
+  };
+
+  res.send(response);
 };
 
-export async function deleteArticle(
+export const deleteArticle: AuthenticatedHandler = async (
   req: Request,
-  res: Response
-): Promise<void> {
+  res: Response,
+): Promise<void> => {
   const { id } = create(req.params, IdParamsStruct);
   const userId = req.user?.userId;
   const existingArticle = await prismaClient.article.findUnique({
@@ -94,16 +127,16 @@ export async function deleteArticle(
   }
   await prismaClient.article.delete({ where: { id } });
 
-  res.status(204).send();
-}
+  res.send({ id });
+};
 
 export async function getArticleList(
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> {
   const { page, pageSize, orderBy, keyword } = create(
     req.query,
-    GetArticleListParamsStruct
+    GetArticleListParamsStruct,
   );
   const userId = req.user?.userId;
 
@@ -115,21 +148,32 @@ export async function getArticleList(
   const articles = await prismaClient.article.findMany({
     skip: (page - 1) * pageSize,
     take: pageSize,
-    orderBy: orderBy === "recent" ? { createdAt: "desc" } : { id: "asc" },
+    orderBy:
+      orderBy === "recent" ? { createdAt: "desc" } : { createdAt: "asc" },
     where,
   });
 
   const articlesWithIsLiked = await attachIsLiked(articles, userId, "article");
 
+  // 응답 형식 정렬
+  const formattedList = articlesWithIsLiked.map((article) => ({
+    updatedAt: article.updatedAt,
+    createdAt: article.createdAt,
+    image: article.image,
+    content: article.content,
+    title: article.title,
+    id: article.id,
+  }));
+
   res.send({
-    list: articlesWithIsLiked,
     totalCount,
+    list: formattedList,
   });
 }
 
 export async function createComment(
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> {
   const userId = req.user?.userId;
   if (!userId) {
@@ -161,7 +205,7 @@ export async function createComment(
 
 export async function getCommentList(
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> {
   const { id: articleId } = create(req.params, IdParamsStruct);
   const { cursor, limit } = create(req.query, GetCommentListParamsStruct);
@@ -180,7 +224,7 @@ export async function getCommentList(
     orderBy: { createdAt: "desc" },
   });
   const comments = commentsWithCursor.slice(0, limit);
-  const cursorComment = commentsWithCursor[commentsWithCursor.length - 1];
+  const cursorComment = commentsWithCursor[limit];
   const nextCursor = cursorComment ? cursorComment.id : null;
 
   res.send({

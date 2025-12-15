@@ -5,7 +5,6 @@ import {
   PaginatedResponse,
 } from "./common";
 
-
 export interface ArticleBase {
   title: string;
   content: string;
@@ -28,7 +27,6 @@ export interface ArticleListParams {
 }
 
 export type ArticleListResponse = PaginatedResponse<Article>;
-
 
 export interface ProductBase {
   name: string;
@@ -55,7 +53,6 @@ export interface ProductListParams {
 
 export type ProductListResponse = PaginatedResponse<Product>;
 
-
 export interface CommentBase {
   content: string;
 }
@@ -69,7 +66,6 @@ export interface Comment extends CommentBase, TimestampFields {
 
 export interface CommentCreateData extends CommentBase {}
 export interface CommentUpdateData extends Partial<CommentBase> {}
-
 
 export interface Like extends TimestampFields {
   id: ID;

@@ -6,7 +6,8 @@ import {
   updateMyInfo,
   changeMyPassword,
   getMyProducts,
-} from "../controllers/userInfoController";
+  getMyArticles,
+} from "../inbound/controllers/userInfoController";
 
 const userInfoRouter = express.Router();
 
@@ -15,8 +16,9 @@ userInfoRouter.patch("/me", authMiddleware, withAsync(updateMyInfo));
 userInfoRouter.patch(
   "/me/password",
   authMiddleware,
-  withAsync(changeMyPassword)
+  withAsync(changeMyPassword),
 );
 userInfoRouter.get("/me/products", authMiddleware, withAsync(getMyProducts));
+userInfoRouter.get("/me/articles", authMiddleware, withAsync(getMyArticles));
 
 export default userInfoRouter;

@@ -13,7 +13,6 @@ export interface IdParams {
   [key: string]: string;
 }
 
-
 export interface CreateArticleRequest extends Request {
   body: ArticleCreateData;
 }
@@ -26,7 +25,6 @@ export interface UpdateArticleRequest extends Request {
 export interface GetArticleRequest extends Request {
   params: IdParams;
 }
-
 
 export interface CreateProductRequest extends Request {
   body: ProductCreateData;
@@ -50,7 +48,6 @@ export interface UpdateCommentRequest extends Request {
   body: CommentUpdateData;
   params: IdParams;
 }
-
 
 export interface LikeRequest extends Request {
   params: IdParams;

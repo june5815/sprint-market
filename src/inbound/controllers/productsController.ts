@@ -1,28 +1,28 @@
 import { Request, Response } from "express";
 import { create } from "superstruct";
-import { prismaClient } from "../lib/prismaClient";
-import NotFoundError from "../lib/errors/NotFoundError";
-import BadRequestError from "../lib/errors/BadRequestError";
-import { IdParamsStruct } from "../structs/commonStructs";
+import { prismaClient } from "../../lib/prismaClient";
+import NotFoundError from "../../lib/errors/NotFoundError";
+import BadRequestError from "../../lib/errors/BadRequestError";
+import { IdParamsStruct } from "../../structs/commonStructs";
 import {
   CreateProductBodyStruct,
   GetProductListParamsStruct,
   UpdateProductBodyStruct,
-} from "../structs/productsStruct";
+} from "../../structs/productsStruct";
 import {
   CreateCommentBodyStruct,
   GetCommentListParamsStruct,
-} from "../structs/commentsStruct";
-import { attachIsLiked } from "../lib/isLikedUtil";
-import { AuthenticatedHandler, ExpressHandler } from "../types/common";
+} from "../../structs/commentsStruct";
+import { attachIsLiked } from "../../lib/isLikedUtil";
+import { AuthenticatedHandler, ExpressHandler } from "../../types/common";
 
 export const createProduct: AuthenticatedHandler = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const { name, description, price, tags, images } = create(
     req.body,
-    CreateProductBodyStruct
+    CreateProductBodyStruct,
   );
   const userId = req.user?.userId;
   if (!userId) {
@@ -39,23 +39,25 @@ export const createProduct: AuthenticatedHandler = async (
 
 export async function getProduct(req: Request, res: Response): Promise<void> {
   const { id } = create(req.params, IdParamsStruct);
+  const userId = req.user?.userId;
 
   const product = await prismaClient.product.findUnique({ where: { id } });
   if (!product) {
     throw new NotFoundError("product", id);
   }
 
-  res.send(product);
+  const [productWithLiked] = await attachIsLiked([product], userId, "product");
+  res.send(productWithLiked);
 }
 
-export async function updateProduct(
+export const updateProduct: AuthenticatedHandler = async (
   req: Request,
-  res: Response
-): Promise<void> {
+  res: Response,
+): Promise<void> => {
   const { id } = create(req.params, IdParamsStruct);
   const { name, description, price, tags, images } = create(
     req.body,
-    UpdateProductBodyStruct
+    UpdateProductBodyStruct,
   );
   const userId = req.user?.userId;
   const existingProduct = await prismaClient.product.findUnique({
@@ -74,12 +76,23 @@ export async function updateProduct(
     where: { id },
     data: { name, description, price, tags, images },
   });
-  res.send(updatedProduct);
-}
+
+  // 응답 형식 정렬
+  const response = {
+    createdAt: updatedProduct.createdAt,
+    images: updatedProduct.images,
+    tags: updatedProduct.tags,
+    price: updatedProduct.price,
+    description: updatedProduct.description,
+    name: updatedProduct.name,
+    id: updatedProduct.id,
+  };
+  res.send(response);
+};
 
 export async function deleteProduct(
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> {
   const { id } = create(req.params, IdParamsStruct);
   const userId = req.user?.userId;
@@ -96,16 +109,16 @@ export async function deleteProduct(
     return;
   }
   await prismaClient.product.delete({ where: { id } });
-  res.status(204).send();
+  res.send({ id });
 }
 
 export async function getProductList(
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> {
   const { page, pageSize, orderBy, keyword } = create(
     req.query,
-    GetProductListParamsStruct
+    GetProductListParamsStruct,
   );
   const userId = req.user?.userId;
 
@@ -121,7 +134,8 @@ export async function getProductList(
   const products = await prismaClient.product.findMany({
     skip: (page - 1) * pageSize,
     take: pageSize,
-    orderBy: orderBy === "recent" ? { id: "desc" } : { id: "asc" },
+    orderBy:
+      orderBy === "recent" ? { createdAt: "desc" } : { createdAt: "asc" },
     where,
   });
 
@@ -135,7 +149,7 @@ export async function getProductList(
 
 export async function createComment(
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> {
   const { id: productId } = create(req.params, IdParamsStruct);
   const { content } = create(req.body, CreateCommentBodyStruct);
@@ -164,7 +178,7 @@ export async function createComment(
 
 export async function getCommentList(
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> {
   const { id: productId } = create(req.params, IdParamsStruct);
   const { cursor, limit } = create(req.query, GetCommentListParamsStruct);
@@ -180,9 +194,10 @@ export async function getCommentList(
     cursor: cursor ? { id: cursor } : undefined,
     take: limit + 1,
     where: { productId },
+    orderBy: { createdAt: "desc" },
   });
   const comments = commentsWithCursorComment.slice(0, limit);
-  const cursorComment = commentsWithCursorComment[comments.length - 1];
+  const cursorComment = commentsWithCursorComment[limit];
   const nextCursor = cursorComment ? cursorComment.id : null;
 
   res.send({
