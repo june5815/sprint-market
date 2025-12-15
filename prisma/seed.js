@@ -5,12 +5,11 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("시딩 시작");
 
-
   const user = await prisma.user.create({
     data: {
       email: "test@example.com",
       nickname: "테스트유저",
-      password: "hashedpassword", 
+      password: "hashedpassword",
     },
   });
 

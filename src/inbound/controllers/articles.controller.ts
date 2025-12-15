@@ -30,7 +30,7 @@ const getArticleListService = new GetArticleListService(articleRepository);
 
 export const createArticle: AuthenticatedHandler = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const userId = req.user?.userId;
   if (!userId) {
@@ -53,7 +53,7 @@ export const createArticle: AuthenticatedHandler = async (
 
 export const getArticle: AuthenticatedHandler = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const { id } = create(req.params, IdParamsStruct);
 
@@ -64,7 +64,7 @@ export const getArticle: AuthenticatedHandler = async (
 
 export const getArticleList: AuthenticatedHandler = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const { page, pageSize } = create(req.query, PageParamsStruct);
 
@@ -78,7 +78,7 @@ export const getArticleList: AuthenticatedHandler = async (
 
 export const updateArticle: AuthenticatedHandler = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const userId = req.user?.userId;
   if (!userId) {
@@ -101,7 +101,7 @@ export const updateArticle: AuthenticatedHandler = async (
 
 export const deleteArticle: AuthenticatedHandler = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const userId = req.user?.userId;
   if (!userId) {

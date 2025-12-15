@@ -8,13 +8,13 @@ const userRouterCA: Router = express.Router();
 userRouterCA.get(
   "/me",
   authMiddleware,
-  withAsync((req: Request, res: Response) => getMyInfo(req, res))
+  withAsync((req: Request, res: Response) => getMyInfo(req, res)),
 );
 
 userRouterCA.patch(
   "/me",
   authMiddleware,
-  withAsync((req: Request, res: Response) => updateMyInfo(req, res))
+  withAsync((req: Request, res: Response) => updateMyInfo(req, res)),
 );
 
 export default userRouterCA;

@@ -33,7 +33,7 @@ export class PrismaUserRepository implements IUserRepository {
   }
 
   async findByEmail(
-    email: string
+    email: string,
   ): Promise<(User & { hashedPassword: string }) | null> {
     const raw = await this.prisma.user.findUnique({
       where: { email },
@@ -50,7 +50,7 @@ export class PrismaUserRepository implements IUserRepository {
     data: {
       nickname?: string;
       image?: string | null;
-    }
+    },
   ): Promise<User> {
     const raw = await this.prisma.user.update({
       where: { id },
@@ -87,12 +87,12 @@ export class PrismaUserRepository implements IUserRepository {
   async saveRefreshToken(
     userId: ID,
     token: string,
-    expiresAt: Date
+    expiresAt: Date,
   ): Promise<void> {}
 
   async findRefreshToken(
     userId: ID,
-    token: string
+    token: string,
   ): Promise<{ expiresAt: Date } | null> {
     return null;
   }

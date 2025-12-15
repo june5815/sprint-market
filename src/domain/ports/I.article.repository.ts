@@ -24,7 +24,7 @@ export interface IArticleRepository {
       title?: string;
       content?: string;
       image?: string | null;
-    }
+    },
   ): Promise<Article>;
 
   delete(id: ID): Promise<void>;

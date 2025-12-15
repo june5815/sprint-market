@@ -22,7 +22,7 @@ export class ArticlePresenter {
   }
   toListResponse(
     articles: Article[],
-    total: number
+    total: number,
   ): {
     list: Array<{
       id: number;

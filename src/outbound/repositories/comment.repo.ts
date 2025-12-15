@@ -37,7 +37,7 @@ export class PrismaCommentRepository implements ICommentRepository {
     query: {
       cursor?: ID;
       limit: number;
-    }
+    },
   ): Promise<{ items: Comment[]; nextCursor: ID | null }> {
     const items = await this.prisma.comment.findMany({
       where: { articleId },
@@ -61,7 +61,7 @@ export class PrismaCommentRepository implements ICommentRepository {
     query: {
       cursor?: ID;
       limit: number;
-    }
+    },
   ): Promise<{ items: Comment[]; nextCursor: ID | null }> {
     const items = await this.prisma.comment.findMany({
       where: { productId },
@@ -84,7 +84,7 @@ export class PrismaCommentRepository implements ICommentRepository {
     id: ID,
     data: {
       content: string;
-    }
+    },
   ): Promise<Comment> {
     const raw = await this.prisma.comment.update({
       where: { id },

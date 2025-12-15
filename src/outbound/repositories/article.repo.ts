@@ -68,7 +68,7 @@ export class PrismaArticleRepository implements IArticleRepository {
       title?: string;
       content?: string;
       image?: string | null;
-    }
+    },
   ): Promise<Article> {
     const raw = await this.prisma.article.update({
       where: { id },

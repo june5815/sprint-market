@@ -10,7 +10,7 @@ import { IdParamsStruct } from "../../common/validation/common.structs";
 
 export const likeArticle: AuthenticatedHandler = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const { id } = create(req.params, IdParamsStruct);
   const userId = req.user?.userId;
@@ -46,7 +46,7 @@ export const likeArticle: AuthenticatedHandler = async (
 
 export const unlikeArticle: AuthenticatedHandler = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const { id } = create(req.params, IdParamsStruct);
   const userId = req.user?.userId;
@@ -69,7 +69,7 @@ export const unlikeArticle: AuthenticatedHandler = async (
 
 export const likeProduct: AuthenticatedHandler = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const { id } = create(req.params, IdParamsStruct);
   const userId = req.user?.userId;
@@ -105,7 +105,7 @@ export const likeProduct: AuthenticatedHandler = async (
 
 export const unlikeProduct: AuthenticatedHandler = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const { id } = create(req.params, IdParamsStruct);
   const userId = req.user?.userId;

@@ -28,7 +28,7 @@ export interface IProductRepository {
       price?: number;
       tags?: string[];
       images?: string[];
-    }
+    },
   ): Promise<Product>;
 
   delete(id: ID): Promise<void>;
@@ -39,6 +39,6 @@ export interface IProductRepository {
 
   findPriceHistoryById(
     id: ID,
-    limit?: number
+    limit?: number,
   ): Promise<{ price: number; updatedAt: Date }[]>;
 }

@@ -14,7 +14,7 @@ export class UserPresenter {
 
   toAuthResponse(
     user: User,
-    tokens: { accessToken: string; refreshToken: string }
+    tokens: { accessToken: string; refreshToken: string },
   ) {
     return {
       user: this.toResponse(user),

@@ -74,7 +74,7 @@ export class PrismaProductRepository implements IProductRepository {
       price?: number;
       tags?: string[];
       images?: string[];
-    }
+    },
   ): Promise<Product> {
     const raw = await this.prisma.product.update({
       where: { id },
@@ -111,7 +111,7 @@ export class PrismaProductRepository implements IProductRepository {
 
   async findPriceHistoryById(
     id: ID,
-    limit: number = 5
+    limit: number = 5,
   ): Promise<{ price: number; updatedAt: Date }[]> {
     const products = await this.prisma.product.findMany({
       where: { id },

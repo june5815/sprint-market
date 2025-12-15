@@ -16,7 +16,7 @@ interface LikeRecord {
 export async function attachIsLiked(
   items: LikeableItem[],
   userId: ID | null | undefined,
-  type: LikeTarget
+  type: LikeTarget,
 ): Promise<LikeableItemWithLiked[]> {
   if (!userId) {
     return items.map((item) => ({ ...item, isLiked: false }));
@@ -35,7 +35,7 @@ export async function attachIsLiked(
   });
 
   const likedIds = likes.map((like: LikeRecord) =>
-    type === "article" ? like.articleId : like.productId
+    type === "article" ? like.articleId : like.productId,
   );
   return items.map((item) => ({
     ...item,

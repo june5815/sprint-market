@@ -11,7 +11,7 @@ export interface IUserRepository {
   findById(id: ID): Promise<User | null>;
 
   findByEmail(
-    email: string
+    email: string,
   ): Promise<(User & { hashedPassword: string }) | null>;
 
   update(
@@ -19,7 +19,7 @@ export interface IUserRepository {
     data: {
       nickname?: string;
       image?: string | null;
-    }
+    },
   ): Promise<User>;
 
   exists(id: ID): Promise<boolean>;
@@ -32,7 +32,7 @@ export interface IUserRepository {
 
   findRefreshToken(
     userId: ID,
-    token: string
+    token: string,
   ): Promise<{ expiresAt: Date } | null>;
 
   deleteRefreshToken(userId: ID, token: string): Promise<void>;

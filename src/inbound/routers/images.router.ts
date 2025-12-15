@@ -9,7 +9,7 @@ imagesRouter.post(
   "/upload",
   authMiddleware,
   upload.single("image"),
-  withAsync(uploadImage)
+  withAsync(uploadImage),
 );
 
 export default imagesRouter;

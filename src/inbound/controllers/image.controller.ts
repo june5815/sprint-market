@@ -50,7 +50,7 @@ interface MulterRequest extends Request {
 
 export async function uploadImage(
   req: MulterRequest,
-  res: Response
+  res: Response,
 ): Promise<void> {
   if (!req.file) {
     res.status(400).send({ message: "No file uploaded" });

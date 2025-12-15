@@ -16,7 +16,7 @@ export interface ICommentRepository {
     query: {
       cursor?: ID;
       limit: number;
-    }
+    },
   ): Promise<{ items: Comment[]; nextCursor: ID | null }>;
 
   findByProductId(
@@ -24,14 +24,14 @@ export interface ICommentRepository {
     query: {
       cursor?: ID;
       limit: number;
-    }
+    },
   ): Promise<{ items: Comment[]; nextCursor: ID | null }>;
 
   update(
     id: ID,
     data: {
       content: string;
-    }
+    },
   ): Promise<Comment>;
 
   delete(id: ID): Promise<void>;

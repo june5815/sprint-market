@@ -11,13 +11,13 @@ const commentsRouterCA: Router = express.Router();
 commentsRouterCA.patch(
   "/:id",
   authMiddleware,
-  withAsync((req: Request, res: Response) => updateComment(req, res))
+  withAsync((req: Request, res: Response) => updateComment(req, res)),
 );
 
 commentsRouterCA.delete(
   "/:id",
   authMiddleware,
-  withAsync((req: Request, res: Response) => deleteComment(req, res))
+  withAsync((req: Request, res: Response) => deleteComment(req, res)),
 );
 
 export default commentsRouterCA;
