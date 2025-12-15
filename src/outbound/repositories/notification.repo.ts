@@ -32,7 +32,7 @@ export class PrismaNotificationRepository implements INotificationRepository {
     query: {
       limit: number;
       offset: number;
-    }
+    },
   ): Promise<{ items: any[]; total: number }> {
     const [items, total] = await Promise.all([
       this.prisma.notification.findMany({

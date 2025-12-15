@@ -14,7 +14,7 @@ export async function notifyPriceChange(
   productId: number,
   userId: number,
   oldPrice: number,
-  newPrice: number
+  newPrice: number,
 ) {
   if (oldPrice === newPrice) {
     return;
@@ -69,7 +69,7 @@ export async function notifyPriceChange(
 
 export async function getPriceChangeHistory(
   productId: number,
-  limit: number = 10
+  limit: number = 10,
 ) {
   const notifications = await prismaClient.notification.findMany({
     where: {

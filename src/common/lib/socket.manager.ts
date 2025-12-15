@@ -5,6 +5,7 @@ import { verifyToken } from "./jwt";
 
 interface AuthenticatedSocket extends Socket {
   userId?: number;
+  deviceId?: string;
 }
 
 type SocketCallback<T = NotificationResponse> = (response: T) => void;
@@ -14,6 +15,15 @@ interface NotificationResponse {
   data?: Record<string, unknown>;
   message?: string;
 }
+
+interface UserClientInfo {
+  socketId: string;
+  deviceId: string;
+  connectedAt: Date;
+  isActive: boolean;
+}
+
+const userClients = new Map<number, Map<string, UserClientInfo>>();
 
 export let io: SocketIOServer;
 
@@ -34,6 +44,7 @@ export function initializeSocket(httpServer: HTTPServer): SocketIOServer {
     try {
       const decoded = verifyToken(token);
       socket.userId = decoded.userId;
+      socket.deviceId = socket.handshake.auth.deviceId || socket.id;
       next();
     } catch (error) {
       next(new Error("Authentication error"));
@@ -41,13 +52,69 @@ export function initializeSocket(httpServer: HTTPServer): SocketIOServer {
   });
 
   io.on("connection", (socket: AuthenticatedSocket) => {
-    const userId = socket.userId;
-    console.log(`사용자 ${userId} 연결되었습니다.`);
+    const userId = socket.userId!;
+    const deviceId = socket.deviceId!;
+    const socketId = socket.id;
+
+    if (!userClients.has(userId)) {
+      userClients.set(userId, new Map());
+    }
+
+    const userClientMap = userClients.get(userId)!;
+    userClientMap.set(deviceId, {
+      socketId,
+      deviceId,
+      connectedAt: new Date(),
+      isActive: true,
+    });
+
+    console.log(
+      `사용자 ${userId} (디바이스: ${deviceId}) 연결되었습니다. 활성 클라이언트: ${userClientMap.size}개`,
+    );
 
     socket.join(`user:${userId}`);
 
+    const userClientMap_current = userClients.get(userId)!;
+    if (userClientMap_current.size > 1) {
+      socket.to(`user:${userId}`).emit("client:connected", {
+        deviceId,
+        totalClients: userClientMap_current.size,
+        connectedDevices: Array.from(userClientMap_current.values()).map(
+          (c) => ({
+            deviceId: c.deviceId,
+            connectedAt: c.connectedAt,
+          }),
+        ),
+      });
+    }
+
     socket.on("disconnect", () => {
-      console.log(`사용자 ${userId} 연결 해제되었습니다.`);
+      const userClientMap = userClients.get(userId);
+      if (userClientMap) {
+        userClientMap.delete(deviceId);
+
+        if (userClientMap.size === 0) {
+          userClients.delete(userId);
+          console.log(
+            `사용자 ${userId}의 모든 클라이언트가 연결 해제되었습니다.`,
+          );
+
+          socket.to(`user:${userId}`).emit("all-clients:disconnected");
+        } else {
+          console.log(
+            `사용자 ${userId} (디바이스: ${deviceId}) 연결 해제. 활성 클라이언트: ${userClientMap.size}개`,
+          );
+
+          socket.to(`user:${userId}`).emit("client:disconnected", {
+            deviceId,
+            remainingClients: userClientMap.size,
+            connectedDevices: Array.from(userClientMap.values()).map((c) => ({
+              deviceId: c.deviceId,
+              connectedAt: c.connectedAt,
+            })),
+          });
+        }
+      }
     });
 
     socket.on(
@@ -86,14 +153,14 @@ export function initializeSocket(httpServer: HTTPServer): SocketIOServer {
             });
           }
         }
-      }
+      },
     );
 
     socket.on(
       "mark:notification-as-read",
       async (
         notificationId: number,
-        callback: SocketCallback<NotificationResponse>
+        callback: SocketCallback<NotificationResponse>,
       ) => {
         try {
           const notification = await prismaClient.notification.findUnique({
@@ -135,7 +202,7 @@ export function initializeSocket(httpServer: HTTPServer): SocketIOServer {
             });
           }
         }
-      }
+      },
     );
 
     socket.on(
@@ -163,7 +230,7 @@ export function initializeSocket(httpServer: HTTPServer): SocketIOServer {
             });
           }
         }
-      }
+      },
     );
 
     socket.on(
@@ -190,11 +257,122 @@ export function initializeSocket(httpServer: HTTPServer): SocketIOServer {
             });
           }
         }
-      }
+      },
+    );
+
+    socket.on(
+      "get:connected-clients",
+      (callback: SocketCallback<NotificationResponse>) => {
+        try {
+          const userClientMap = userClients.get(userId);
+          const clients = userClientMap
+            ? Array.from(userClientMap.values()).map((c) => ({
+                deviceId: c.deviceId,
+                isCurrentClient: c.socketId === socketId,
+                connectedAt: c.connectedAt,
+              }))
+            : [];
+
+          if (typeof callback === "function") {
+            callback({
+              success: true,
+              data: {
+                totalClients: clients.length,
+                clients,
+              },
+            });
+          }
+        } catch (error) {
+          if (typeof callback === "function") {
+            callback({
+              success: false,
+              message: "클라이언트 정보 조회 실패",
+            });
+          }
+        }
+      },
+    );
+
+    socket.on(
+      "send:direct-message",
+      async (
+        targetDeviceId: string,
+        message: string,
+        callback: SocketCallback<NotificationResponse>,
+      ) => {
+        try {
+          const userClientMap = userClients.get(userId);
+          if (!userClientMap || !userClientMap.has(targetDeviceId)) {
+            if (typeof callback === "function") {
+              callback({
+                success: false,
+                message: "대상 클라이언트를 찾을 수 없습니다.",
+              });
+            }
+            return;
+          }
+
+          const targetClient = userClientMap.get(targetDeviceId)!;
+          io.to(targetClient.socketId).emit("message:direct", {
+            from: socket.userId,
+            message,
+            timestamp: new Date(),
+          });
+
+          if (typeof callback === "function") {
+            callback({
+              success: true,
+              message: "메시지 전송 완료",
+            });
+          }
+        } catch (error) {
+          if (typeof callback === "function") {
+            callback({
+              success: false,
+              message: "메시지 전송 실패",
+            });
+          }
+        }
+      },
+    );
+
+    socket.on(
+      "broadcast:to-all-clients",
+      async (event: string, data: unknown) => {
+        try {
+          const userClientMap = userClients.get(userId);
+          if (userClientMap) {
+            for (const clientInfo of userClientMap.values()) {
+              io.to(clientInfo.socketId).emit(`sync:${event}`, data);
+            }
+          }
+        } catch (error) {
+          console.error("브로드캐스트 실패:", error);
+        }
+      },
     );
   });
 
   return io;
+}
+
+export function broadcastToAllUserClients(
+  userId: number,
+  eventName: string,
+  data: unknown,
+): number {
+  const userClientMap = userClients.get(userId);
+  if (!userClientMap) {
+    return 0;
+  }
+
+  let count = 0;
+  for (const clientInfo of userClientMap.values()) {
+    io.to(clientInfo.socketId).emit(eventName, data);
+    count++;
+  }
+
+  return count;
 }
 
 export async function sendNotificationToUser(
@@ -206,7 +384,7 @@ export async function sendNotificationToUser(
     articleId?: number;
     productId?: number;
     commentId?: number;
-  }
+  },
 ) {
   try {
     const savedNotification = await prismaClient.notification.create({
@@ -222,7 +400,14 @@ export async function sendNotificationToUser(
     });
 
     if (io) {
-      io.to(`user:${recipientId}`).emit("notification:new", savedNotification);
+      const clientCount = broadcastToAllUserClients(
+        recipientId,
+        "notification:new",
+        savedNotification,
+      );
+      console.log(
+        `알림 전송: 사용자 ${recipientId}의 ${clientCount}개 클라이언트에 전달됨`,
+      );
     }
 
     return savedNotification;

@@ -13,7 +13,7 @@ export class NotificationAdapter {
       articleId?: ID | null;
       productId?: ID | null;
       [key: string]: unknown;
-    }
+    },
   ): Promise<void> {
     try {
       this.io.to(`user:${recipientId}`).emit("notification:new", {
@@ -23,7 +23,7 @@ export class NotificationAdapter {
     } catch (error) {
       console.error(
         `Failed to send notification to user ${recipientId}:`,
-        error
+        error,
       );
     }
   }
@@ -51,7 +51,7 @@ export class NotificationAdapter {
     } catch (error) {
       console.error(
         `Failed to get connected sockets for user ${userId}:`,
-        error
+        error,
       );
       return 0;
     }
@@ -70,7 +70,7 @@ export class NotificationAdapter {
   broadcastNotificationMarked(
     recipientId: ID,
     notificationId: ID,
-    isRead: boolean
+    isRead: boolean,
   ): void {
     try {
       this.io.to(`user:${recipientId}`).emit("notification:marked", {
