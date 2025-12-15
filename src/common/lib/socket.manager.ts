@@ -69,7 +69,7 @@ export function initializeSocket(httpServer: HTTPServer): SocketIOServer {
     });
 
     console.log(
-      `사용자 ${userId} (디바이스: ${deviceId}) 연결되었습니다. 활성 클라이언트: ${userClientMap.size}개`,
+      `사용자 ${userId} (디바이스: ${deviceId}) 연결되었습니다. 활성 클라이언트: ${userClientMap.size}개`
     );
 
     socket.join(`user:${userId}`);
@@ -83,7 +83,7 @@ export function initializeSocket(httpServer: HTTPServer): SocketIOServer {
           (c) => ({
             deviceId: c.deviceId,
             connectedAt: c.connectedAt,
-          }),
+          })
         ),
       });
     }
@@ -96,13 +96,13 @@ export function initializeSocket(httpServer: HTTPServer): SocketIOServer {
         if (userClientMap.size === 0) {
           userClients.delete(userId);
           console.log(
-            `사용자 ${userId}의 모든 클라이언트가 연결 해제되었습니다.`,
+            `사용자 ${userId}의 모든 클라이언트가 연결 해제되었습니다.`
           );
 
           socket.to(`user:${userId}`).emit("all-clients:disconnected");
         } else {
           console.log(
-            `사용자 ${userId} (디바이스: ${deviceId}) 연결 해제. 활성 클라이언트: ${userClientMap.size}개`,
+            `사용자 ${userId} (디바이스: ${deviceId}) 연결 해제. 활성 클라이언트: ${userClientMap.size}개`
           );
 
           socket.to(`user:${userId}`).emit("client:disconnected", {
@@ -153,14 +153,14 @@ export function initializeSocket(httpServer: HTTPServer): SocketIOServer {
             });
           }
         }
-      },
+      }
     );
 
     socket.on(
       "mark:notification-as-read",
       async (
         notificationId: number,
-        callback: SocketCallback<NotificationResponse>,
+        callback: SocketCallback<NotificationResponse>
       ) => {
         try {
           const notification = await prismaClient.notification.findUnique({
@@ -202,7 +202,7 @@ export function initializeSocket(httpServer: HTTPServer): SocketIOServer {
             });
           }
         }
-      },
+      }
     );
 
     socket.on(
@@ -230,7 +230,7 @@ export function initializeSocket(httpServer: HTTPServer): SocketIOServer {
             });
           }
         }
-      },
+      }
     );
 
     socket.on(
@@ -257,7 +257,7 @@ export function initializeSocket(httpServer: HTTPServer): SocketIOServer {
             });
           }
         }
-      },
+      }
     );
 
     socket.on(
@@ -290,7 +290,7 @@ export function initializeSocket(httpServer: HTTPServer): SocketIOServer {
             });
           }
         }
-      },
+      }
     );
 
     socket.on(
@@ -298,7 +298,7 @@ export function initializeSocket(httpServer: HTTPServer): SocketIOServer {
       async (
         targetDeviceId: string,
         message: string,
-        callback: SocketCallback<NotificationResponse>,
+        callback: SocketCallback<NotificationResponse>
       ) => {
         try {
           const userClientMap = userClients.get(userId);
@@ -333,7 +333,7 @@ export function initializeSocket(httpServer: HTTPServer): SocketIOServer {
             });
           }
         }
-      },
+      }
     );
 
     socket.on(
@@ -349,7 +349,7 @@ export function initializeSocket(httpServer: HTTPServer): SocketIOServer {
         } catch (error) {
           console.error("브로드캐스트 실패:", error);
         }
-      },
+      }
     );
   });
 
@@ -359,7 +359,7 @@ export function initializeSocket(httpServer: HTTPServer): SocketIOServer {
 export function broadcastToAllUserClients(
   userId: number,
   eventName: string,
-  data: unknown,
+  data: unknown
 ): number {
   const userClientMap = userClients.get(userId);
   if (!userClientMap) {
@@ -384,7 +384,7 @@ export async function sendNotificationToUser(
     articleId?: number;
     productId?: number;
     commentId?: number;
-  },
+  }
 ) {
   try {
     const savedNotification = await prismaClient.notification.create({
@@ -403,10 +403,10 @@ export async function sendNotificationToUser(
       const clientCount = broadcastToAllUserClients(
         recipientId,
         "notification:new",
-        savedNotification,
+        savedNotification
       );
       console.log(
-        `알림 전송: 사용자 ${recipientId}의 ${clientCount}개 클라이언트에 전달됨`,
+        `알림 전송: 사용자 ${recipientId}의 ${clientCount}개 클라이언트에 전달됨`
       );
     }
 
