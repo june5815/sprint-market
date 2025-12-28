@@ -2,15 +2,15 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 import http from "http";
-import { PORT, PUBLIC_PATH, STATIC_PATH } from "./common/config/constants.js";
-import { initializeSocket } from "./common/lib/socket.manager.js";
-import articlesRouterCA from "./inbound/routers/articles.router.js";
-import userRouterCA from "./inbound/routers/user.router.js";
-import imagesRouter from "./inbound/routers/images.router.js";
+import { PORT, PUBLIC_PATH, STATIC_PATH } from "./common/config/constants";
+import { initializeSocket } from "./common/lib/socket.manager";
+import articlesRouterCA from "./inbound/routers/articles.router";
+import userRouterCA from "./inbound/routers/user.router";
+import imagesRouter from "./inbound/routers/images.router";
 import {
   defaultNotFoundHandler,
   globalErrorHandler,
-} from "./inbound/controllers/error.controller.js";
+} from "./inbound/controllers/error.controller";
 
 const app = express();
 
