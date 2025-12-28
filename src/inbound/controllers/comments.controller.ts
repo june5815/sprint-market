@@ -15,7 +15,7 @@ import { notifyCommentOnArticle } from "../../domain/services/comment.notificati
 
 export const createComment: AuthenticatedHandler = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const userId = req.user?.userId;
   if (!userId) {
@@ -44,8 +44,6 @@ export const createComment: AuthenticatedHandler = async (
       articleId,
     },
   });
-
-  // 댓글 알림 전송
   await notifyCommentOnArticle(articleId, userId, content);
 
   res.status(201).json(comment);
@@ -53,7 +51,7 @@ export const createComment: AuthenticatedHandler = async (
 
 export const updateComment: AuthenticatedHandler = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const { id } = create(req.params, IdParamsStruct);
   const { content } = create(req.body, UpdateCommentBodyStruct);
@@ -83,7 +81,7 @@ export const updateComment: AuthenticatedHandler = async (
 
 export const deleteComment: AuthenticatedHandler = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const { id } = create(req.params, IdParamsStruct);
   const userId = req.user?.userId;
