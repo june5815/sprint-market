@@ -15,35 +15,35 @@ const articlesRouterCA: Router = express.Router();
 articlesRouterCA.post(
   "/",
   authMiddleware,
-  withAsync((req: Request, res: Response) => createArticle(req, res))
+  withAsync((req: Request, res: Response) => createArticle(req, res)),
 );
 
 articlesRouterCA.get(
   "/",
-  withAsync((req: Request, res: Response) => getArticleList(req, res))
+  withAsync((req: Request, res: Response) => getArticleList(req, res)),
 );
 
 articlesRouterCA.get(
   "/:id",
-  withAsync((req: Request, res: Response) => getArticle(req, res))
+  withAsync((req: Request, res: Response) => getArticle(req, res)),
 );
 
 articlesRouterCA.patch(
   "/:id",
   authMiddleware,
-  withAsync((req: Request, res: Response) => updateArticle(req, res))
+  withAsync((req: Request, res: Response) => updateArticle(req, res)),
 );
 
 articlesRouterCA.delete(
   "/:id",
   authMiddleware,
-  withAsync((req: Request, res: Response) => deleteArticle(req, res))
+  withAsync((req: Request, res: Response) => deleteArticle(req, res)),
 );
 
 articlesRouterCA.post(
   "/:id/comments",
   authMiddleware,
-  withAsync((req: Request, res: Response) => createComment(req, res))
+  withAsync((req: Request, res: Response) => createComment(req, res)),
 );
 
 export default articlesRouterCA;

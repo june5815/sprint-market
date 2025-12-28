@@ -10,7 +10,7 @@ import {
 
 export const getNotifications: AuthenticatedHandler = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const userId = req.user?.userId;
 
@@ -39,7 +39,7 @@ export const getNotifications: AuthenticatedHandler = async (
 
 export const markAsRead: AuthenticatedHandler = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const { id } = create(req.params, IdParamsStruct);
   const userId = req.user?.userId;
@@ -76,7 +76,7 @@ export const markAsRead: AuthenticatedHandler = async (
 
 export const markAllAsRead: AuthenticatedHandler = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const userId = req.user?.userId;
 
@@ -96,7 +96,7 @@ export const markAllAsRead: AuthenticatedHandler = async (
 
 export const removeNotification: AuthenticatedHandler = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const { id } = create(req.params, IdParamsStruct);
   const userId = req.user?.userId;
@@ -132,7 +132,7 @@ export const removeNotification: AuthenticatedHandler = async (
 
 export const getUnreadCount: AuthenticatedHandler = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const userId = req.user?.userId;
 
